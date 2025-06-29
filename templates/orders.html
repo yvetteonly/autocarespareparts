@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - Sandcy Ltd{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 dark:bg-gray-800 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Orders</h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Track your order history and status
+                </p>
+            </div>
+
+            {% if orders %}
+                <div class="space-y-6">
+                    {% for order in orders %}
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden">
+                        <!-- Order Header -->
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-600">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        Order #{{ order.id }}
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        Placed on {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                    </p>
+                                </div>
+                                <div class="mt-4 md:mt-0 text-right">
+                                    <span>{{ order.total_amount|int }} RWF</span>
+                                    <span class="inline-block px-3 py-1 text-sm rounded-full 
+                                        {% if order.status == 'completed' %}bg-green-100 text-green-800{% elif order.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif order.status == 'shipped' %}bg-blue-100 text-blue-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ order.status|title }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Items -->
+                        <div class="p-6">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Order Items</h4>
+                            <div class="space-y-4">
+                                {% for item in order.items %}
+                                <div class="flex items-center space-x-4">
+                                    {% if item.product %}
+                                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" 
+                                             class="w-16 h-16 object-cover rounded">
+                                        <div class="flex-1">
+                                            <h5 class="font-medium text-gray-900 dark:text-white">{{ item.product.name }}</h5>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ item.product.description }}</p>
+                                        </div>
+                                    {% else %}
+                                        <div class="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
+                                            <i class="fas fa-image text-gray-400"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h5 class="font-medium text-gray-900 dark:text-white">Product #{{ item.product_id }}</h5>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">Product information unavailable</p>
+                                        </div>
+                                    {% endif %}
+                                    <div class="text-right">
+                                        <p class="font-medium text-gray-900 dark:text-white">Qty: {{ item.quantity }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ item.price|int }} RWF each</p>
+                                        <p class="font-semibold text-gray-900 dark:text-white">{{ (item.price * item.quantity)|int }} RWF</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Order Actions -->
+                        <div class="p-6 bg-gray-50 dark:bg-gray-600">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                                <div class="flex space-x-4">
+                                    <a href="{{ url_for('download_invoice', order_id=order.id) }}" 
+                                       class="text-primary hover:text-secondary text-sm font-medium">
+                                        <i class="fas fa-download mr-1"></i>Download Invoice
+                                    </a>
+                                    <a href="{{ url_for('track_package', order_id=order.id) }}" 
+                                       class="text-primary hover:text-secondary text-sm font-medium">
+                                        <i class="fas fa-truck mr-1"></i>Track Package
+                                    </a>
+                                    {% if order.status == 'completed' %}
+                                    <button class="text-primary hover:text-secondary text-sm font-medium">
+                                        <i class="fas fa-star mr-1"></i>Write Review
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <a href="{{ url_for('order_detail', order_id=order.id) }}" 
+                                       class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                        Order Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Order Statistics -->
+                <div class="mt-8 bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-6">Order Statistics</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-shopping-bag text-blue-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ orders|length }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Total Orders</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="bg-green-100 dark:bg-green-900/30 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {{ (orders|selectattr('status', 'equalto', 'completed')|list)|length }}
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-400">Completed</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="bg-yellow-100 dark:bg-yellow-900/30 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-clock text-yellow-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {{ (orders|selectattr('status', 'equalto', 'pending')|list)|length }}
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-400">Pending</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="bg-purple-100 dark:bg-purple-900/30 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-dollar-sign text-purple-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                <span>{{ orders|sum(attribute='total_amount')|int }} RWF</span>
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-400">Total Spent</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="text-center py-12">
+                    <i class="fas fa-shopping-bag text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No orders yet</h3>
+                    <p class="text-gray-500 dark:text-gray-500 mb-6">Start shopping to see your order history here.</p>
+                    <a href="{{ url_for('products') }}" 
+                       class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-lg font-medium transition">
+                        Start Shopping
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Sandcy Ltd{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 dark:bg-gray-800 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Profile</h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Manage your account information and preferences
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Profile Information -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Personal Information -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-6">Personal Information</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name</label>
+                                <p class="text-gray-900 dark:text-white font-medium">{{ current_user.first_name or 'Not provided' }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name</label>
+                                <p class="text-gray-900 dark:text-white font-medium">{{ current_user.last_name or 'Not provided' }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+                            <p class="text-gray-900 dark:text-white font-medium">{{ current_user.username }}</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                            <p class="text-gray-900 dark:text-white font-medium">{{ current_user.email }}</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Member Since</label>
+                            <p class="text-gray-900 dark:text-white font-medium">{{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Account Statistics -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-6">Account Statistics</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <div class="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-shopping-bag text-2xl text-primary"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ current_user.orders|length }}</h3>
+                                <p class="text-gray-600 dark:text-gray-400">Total Orders</p>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="bg-green-100 dark:bg-green-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-dollar-sign text-2xl text-green-600"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <span class="font-semibold">{{ current_user.orders|sum(attribute='total_amount')|int }} RWF</span>
+                                </h3>
+                                <p class="text-gray-600 dark:text-gray-400">Total Spent</p>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="bg-purple-100 dark:bg-purple-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-calendar-alt text-2xl text-purple-600"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    {{ (current_user.orders|selectattr('status', 'equalto', 'completed')|list)|length }}
+                                </h3>
+                                <p class="text-gray-600 dark:text-gray-400">Completed Orders</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-semibold">Recent Orders</h2>
+                            <a href="{{ url_for('orders') }}" class="text-primary hover:text-secondary text-sm">View All Orders</a>
+                        </div>
+                        
+                        {% if current_user.orders %}
+                            <div class="space-y-4">
+                                {% for order in current_user.orders[:3] %}
+                                <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-medium">Order #{{ order.id }}</p>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-semibold">{{ order.total_amount|int }} RWF</p>
+                                            <span class="inline-block px-2 py-1 text-xs rounded-full 
+                                                {% if order.status == 'completed' %}bg-green-100 text-green-800{% elif order.status == 'pending' %}bg-yellow-100 text-yellow-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                                {{ order.status|title }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-8">
+                                <i class="fas fa-shopping-bag text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                                <p class="text-gray-500 dark:text-gray-400">No orders yet</p>
+                                <a href="{{ url_for('products') }}" class="text-primary hover:text-secondary text-sm">Start Shopping</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 sticky top-24">
+                        <h2 class="text-xl font-semibold mb-6">Quick Actions</h2>
+                        
+                        <div class="space-y-4">
+                            <a href="{{ url_for('orders') }}" 
+                               class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-list-alt text-primary"></i>
+                                <span>View All Orders</span>
+                            </a>
+                            
+                            <a href="{{ url_for('products') }}" 
+                               class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-shopping-cart text-primary"></i>
+                                <span>Continue Shopping</span>
+                            </a>
+                            
+                            <a href="{{ url_for('wishlist') }}" 
+                               class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-heart text-primary"></i>
+                                <span>Wishlist</span>
+                            </a>
+                            
+                            <a href="{{ url_for('account_settings') }}" 
+                               class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-cog text-primary"></i>
+                                <span>Account Settings</span>
+                            </a>
+                        </div>
+                        
+                        <hr class="my-6 border-gray-200 dark:border-gray-600">
+                        
+                        <div class="text-center">
+                            <a href="{{ url_for('logout') }}" 
+                               class="text-red-600 hover:text-red-700 font-medium">
+                                Sign Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

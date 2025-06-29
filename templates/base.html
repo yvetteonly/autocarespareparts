@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sandcy Ltd - Premium Car Parts & Tires{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#1e40af',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom CSS for elements that need more styling than Tailwind provides */
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-item-enter {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        .cart-item-enter-active {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 300ms ease-in;
+        }
+        .cart-item-exit {
+            opacity: 1;
+        }
+        .cart-item-exit-active {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 300ms ease-in;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <!-- Header/Navigation -->
+    <header class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-car text-2xl text-primary"></i>
+                <a href="{{ url_for('home') }}" class="text-xl font-bold">AI-Driven<span class="text-primary">AutoParts</span></a>
+            </div>
+            
+            <div class="hidden md:flex space-x-6">
+                <a href="{{ url_for('home') }}" class="hover:text-primary transition">Home</a>
+                <a href="{{ url_for('products') }}" class="hover:text-primary transition">Products</a>
+                <!-- <a href="{{ url_for('products', category='tires') }}" class="hover:text-primary transition">Tires</a> -->
+                <a href="#about" class="hover:text-primary transition">About</a>
+                <a href="#contact" class="hover:text-primary transition">Contact</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('cart') }}" class="relative">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        {% if session.cart %}
+                            <span class="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                {{ session.cart|length }}
+                            </span>
+                        {% endif %}
+                    </a>
+                    <div class="relative" id="user-dropdown">
+                        <button class="flex items-center space-x-1 hover:text-primary transition cursor-pointer" id="user-dropdown-btn">
+                            <i class="fas fa-user"></i>
+                            <span>{{ current_user.username }}</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-lg shadow-lg py-2 hidden z-50" id="user-dropdown-menu">
+                            {% if current_user.is_admin %}
+                                <a href="{{ url_for('admin_dashboard') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-primary font-medium">
+                                    <i class="fas fa-cog mr-2"></i>Admin Dashboard
+                                </a>
+                                <hr class="my-2 border-gray-200 dark:border-gray-600">
+                            {% endif %}
+                            <a href="{{ url_for('profile') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
+                            <a href="{{ url_for('orders') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">My Orders</a>
+                            <hr class="my-2 border-gray-200 dark:border-gray-600">
+                            <a href="{{ url_for('logout') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-600">Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="hover:text-primary transition">Login</a>
+                    <a href="{{ url_for('register') }}" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg transition">Register</a>
+                {% endif %}
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:block"></i>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden p-2">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 shadow-lg absolute w-full left-0 px-4 py-2">
+            <div class="flex flex-col space-y-3">
+                <a href="{{ url_for('home') }}" class="py-2 hover:text-primary transition">Home</a>
+                <a href="{{ url_for('products') }}" class="py-2 hover:text-primary transition">Products</a>
+                <a href="{{ url_for('products', category='tires') }}" class="py-2 hover:text-primary transition">Tires</a>
+                <a href="#about" class="py-2 hover:text-primary transition">About</a>
+                <a href="#contact" class="py-2 hover:text-primary transition">Contact</a>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('cart') }}" class="py-2 hover:text-primary transition">Cart</a>
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="py-2 hover:text-primary transition text-primary font-medium">
+                            <i class="fas fa-cog mr-2"></i>Admin Dashboard
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('profile') }}" class="py-2 hover:text-primary transition">Profile</a>
+                    <a href="{{ url_for('orders') }}" class="py-2 hover:text-primary transition">My Orders</a>
+                    <a href="{{ url_for('logout') }}" class="py-2 hover:text-red-600 transition">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="py-2 hover:text-primary transition">Login</a>
+                    <a href="{{ url_for('register') }}" class="py-2 hover:text-primary transition">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="fixed top-20 right-4 z-50 space-y-2">
+                {% for category, message in messages %}
+                    <div class="bg-{{ 'green' if category == 'success' else 'red' if category == 'error' else 'blue' }}-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' if category == 'error' else 'info-circle' }} mr-2"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-800 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Column 1 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Sandcy Ltd</h3>
+                    <p class="mb-4">Your trusted source for premium car parts and tires since 2005.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-primary transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="hover:text-primary transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="hover:text-primary transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-primary transition"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Column 2 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('home') }}" class="hover:text-primary transition">Home</a></li>
+                        <li><a href="{{ url_for('products') }}" class="hover:text-primary transition">Products</a></li>
+                        <li><a href="{{ url_for('products', category='tires') }}" class="hover:text-primary transition">Tire Finder</a></li>
+                        <li><a href="#about" class="hover:text-primary transition">About Us</a></li>
+                        <li><a href="#contact" class="hover:text-primary transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 3 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Customer Service</h3>
+                    <ul class="space-y-2">
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('profile') }}" class="hover:text-primary transition">My Account</a></li>
+                            <li><a href="{{ url_for('orders') }}" class="hover:text-primary transition">Order Tracking</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('login') }}" class="hover:text-primary transition">My Account</a></li>
+                            <li><a href="{{ url_for('login') }}" class="hover:text-primary transition">Order Tracking</a></li>
+                        {% endif %}
+                        <li><a href="#" class="hover:text-primary transition">Wishlist</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Shipping Policy</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Returns & Refunds</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 4 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                            <span> Kicukiro Centre,Engine station</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-primary"></i>
+                            <span>(250)788778488</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-primary"></i>
+                            <span>ndajebobo2005@gmail.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock mr-3 text-primary"></i>
+                            <span>Mon-Fri: 8AM-6PM, Sat: 9AM-4PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p>&copy; 2023 Sandcy Ltd. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-primary transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-primary transition">Terms of Service</a>
+                    <a href="#" class="hover:text-primary transition">Sitemap</a>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <span class="text-primary font-bold">Capstone Project designed by SIBOMANA Yvette</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const userDropdownBtn = document.getElementById('user-dropdown-btn');
+        const userDropdownMenu = document.getElementById('user-dropdown-menu');
+
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // User dropdown toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const userDropdownBtn = document.getElementById('user-dropdown-btn');
+            const userDropdownMenu = document.getElementById('user-dropdown-menu');
+            
+            if (userDropdownBtn && userDropdownMenu) {
+                userDropdownBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    userDropdownMenu.classList.toggle('hidden');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userDropdownBtn.contains(e.target) && !userDropdownMenu.contains(e.target)) {
+                        userDropdownMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Loading functions
+        function showLoading() {
+            loadingOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Auto-hide flash messages
+        setTimeout(() => {
+            const flashMessages = document.querySelectorAll('.fixed.top-20');
+            flashMessages.forEach(msg => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateX(100%)';
+                setTimeout(() => msg.remove(), 300);
+            });
+        }, 5000);
+
+    </script>
+     {% block extra_js %}{% endblock %}
+</body>
+</html> 

@@ -1,0 +1,574 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section id="home" class="hero-bg text-white py-20 md:py-32 px-4">
+    <div class="container mx-auto text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">Premium Car Parts & Tires</h1>
+        <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">Find the perfect parts for your vehicle at unbeatable prices</p>
+        
+        <div class="max-w-xl mx-auto relative">
+            <form id="searchForm" class="relative">
+                <input type="text" id="searchInput" name="q" placeholder="Search for parts, tires, brands..." 
+                       class="w-full py-4 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
+                <button type="submit" class="absolute right-2 top-2 bg-primary hover:bg-secondary text-white py-2 px-6 rounded-full transition">Search</button>
+            </form>
+            
+            <!-- Search Results Dropdown -->
+            <div id="searchResults" class="absolute top-full left-0 right-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg mt-2 max-h-96 overflow-y-auto z-50 hidden">
+                <div id="searchResultsContent"></div>
+            </div>
+        </div>
+        
+        <div class="mt-8 flex justify-center space-x-4">
+            <a href="{{ url_for('products', category='tires') }}" class="bg-primary hover:bg-secondary px-6 py-3 rounded-lg font-medium transition">Shop Tires</a>
+            <a href="{{ url_for('products') }}" class="bg-transparent border-2 border-white hover:bg-white hover:text-gray-900 px-6 py-3 rounded-lg font-medium transition">Browse Parts</a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-12 bg-gray-100 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Our Product Categories</h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            <!-- Category 1 -->
+            <a href="{{ url_for('products', category='tires') }}" class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition cursor-pointer">
+                <div class="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-tire text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-semibold">Tires</h3>
+            </a>
+            
+            <!-- Category 2 -->
+            <a href="{{ url_for('products', category='batteries') }}" class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition cursor-pointer">
+                <div class="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-battery-full text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-semibold">Batteries</h3>
+            </a>
+            
+            <!-- Category 3 -->
+            <a href="{{ url_for('products', category='brakes') }}" class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition cursor-pointer">
+                <div class="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-car-brake text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-semibold">Brake Pads</h3>
+            </a>
+            
+            <!-- Category 4 -->
+            <a href="{{ url_for('products', category='suspension') }}" class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition cursor-pointer">
+                <div class="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-car-side text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-semibold">Suspension</h3>
+            </a>
+            
+            <!-- Category 5 -->
+            <a href="{{ url_for('products', category='oils') }}" class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition cursor-pointer">
+                <div class="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-oil-can text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-semibold">Engine Oils</h3>
+            </a>
+            
+            <!-- Category 6 -->
+            <a href="{{ url_for('products', category='lights') }}" class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition cursor-pointer">
+                <div class="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-lightbulb text-2xl text-primary"></i>
+                </div>
+                <h3 class="font-semibold">Wipers & Lights</h3>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Tire Size Filter Section -->
+<section id="tires" class="py-12 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">Find Tires by Size</h2>
+        
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 max-w-4xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Width Selector -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Width (mm)</label>
+                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                        <option>Select Width</option>
+                        <option>165</option>
+                        <option>175</option>
+                        <option>185</option>
+                        <option>195</option>
+                        <option>205</option>
+                        <option>215</option>
+                        <option>225</option>
+                    </select>
+                </div>
+                
+                <!-- Aspect Ratio Selector -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Aspect Ratio</label>
+                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                        <option>Select Ratio</option>
+                        <option>45</option>
+                        <option>50</option>
+                        <option>55</option>
+                        <option>60</option>
+                        <option>65</option>
+                        <option>70</option>
+                    </select>
+                </div>
+                
+                <!-- Rim Size Selector -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Rim Size</label>
+                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                        <option>Select Rim</option>
+                        <option>R13</option>
+                        <option>R14</option>
+                        <option>R15</option>
+                        <option>R16</option>
+                        <option>R17</option>
+                        <option>R18</option>
+                    </select>
+                </div>
+                
+                <!-- Brand Selector -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Brand</label>
+                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                        <option>Select Brand</option>
+                        <option>Michelin</option>
+                        <option>Bridgestone</option>
+                        <option>Goodyear</option>
+                        <option>Pirelli</option>
+                        <option>Continental</option>
+                        <option>Yokohama</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <a href="{{ url_for('products', category='tires') }}" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg font-medium transition">Find Tires</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section id="products" class="py-12 bg-gray-100 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">Featured Products</h2>
+        
+        <div class="flex justify-center mb-8">
+            <div class="flex space-x-2 bg-white dark:bg-gray-700 p-1 rounded-lg">
+                <a href="{{ url_for('products') }}" class="px-4 py-2 rounded-md bg-primary text-white">All</a>
+                <a href="{{ url_for('products', category='tires') }}" class="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Tires</a>
+                <a href="{{ url_for('products', category='batteries') }}" class="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Batteries</a>
+                <a href="{{ url_for('products', category='brakes') }}" class="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Brakes</a>
+                <a href="{{ url_for('products', category='oils') }}" class="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Oils</a>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {% for product in products %}
+            <div class="product-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition duration-300">
+                <div class="relative">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
+                    {% if product.category == 'tires' %}
+                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">Sale</span>
+                    {% elif product.category == 'oils' %}
+                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">Popular</span>
+                    {% elif product.category == 'lights' %}
+                        <span class="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">New</span>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-1">{{ product.name }}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-2">{{ product.description }}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-lg">{{ product.price|int }} RWF</span>
+                    </div>
+                    {% if current_user.is_authenticated %}
+                        <button class="add-to-cart mt-4 w-full bg-primary hover:bg-secondary text-white py-2 rounded-lg transition" 
+                                data-id="{{ product.id }}" 
+                                data-name="{{ product.name }}" 
+                                data-price="{{ product.price }}">
+                            Add to Cart
+                        </button>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="block mt-4 w-full bg-primary hover:bg-secondary text-white py-2 rounded-lg transition text-center">
+                            Login to Add to Cart
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-12 text-center">
+            <a href="{{ url_for('products') }}" class="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-lg font-medium transition">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- AI Recommendations Section -->
+{% if current_user.is_authenticated %}
+<section id="ai-recommendations" class="py-12 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">
+            <i class="fas fa-brain text-purple-500 mr-2"></i>
+            Recommended for You
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 text-center mb-8">AI-powered recommendations based on your preferences</p>
+        
+        <div id="recommendationsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Loading state -->
+            <div class="col-span-full text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Loading AI recommendations...</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- About Section -->
+<section id="about" class="py-12 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Sandcy Ltd Workshop" class="rounded-lg shadow-lg w-full">
+            </div>
+            <div class="md:w-1/2">
+                <h2 class="text-3xl font-bold mb-6">About Sandcy Ltd</h2>
+                <p class="text-lg mb-4">Since 2005, Sandcy Ltd has been providing high-quality car parts and tires to customers across the country. Our mission is to help you keep your vehicle running smoothly with premium parts at affordable prices.</p>
+                <p class="text-lg mb-6">With over 15 years of experience in the automotive industry, our team of experts is ready to assist you in finding the perfect parts for your vehicle.</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-full mr-3">
+                            <i class="fas fa-check-circle text-primary"></i>
+                        </div>
+                        <span>Quality Products</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-full mr-3">
+                            <i class="fas fa-check-circle text-primary"></i>
+                        </div>
+                        <span>Fast Shipping</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-full mr-3">
+                            <i class="fas fa-check-circle text-primary"></i>
+                        </div>
+                        <span>Expert Advice</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-full mr-3">
+                            <i class="fas fa-check-circle text-primary"></i>
+                        </div>
+                        <span>Competitive Prices</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Authentication status
+    const isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
+    
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchForm = document.getElementById('searchForm');
+    const searchResults = document.getElementById('searchResults');
+    const searchResultsContent = document.getElementById('searchResultsContent');
+    let searchTimeout;
+
+    // Handle search input with debouncing
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        // Hide results if query is empty
+        if (!query) {
+            searchResults.classList.add('hidden');
+            return;
+        }
+        
+        // Debounce search requests
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    });
+
+    // Handle form submission
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        
+        if (query) {
+            // Redirect to products page with search query
+            window.location.href = `/products?search=${encodeURIComponent(query)}`;
+        }
+    });
+
+    // Perform search via AJAX
+    async function performSearch(query) {
+        try {
+            const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            
+            displaySearchResults(data);
+        } catch (error) {
+            console.error('Search error:', error);
+        }
+    }
+
+    // Display search results
+    function displaySearchResults(data) {
+        if (data.products.length === 0) {
+            searchResultsContent.innerHTML = `
+                <div class="p-4 text-center text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-search mb-2 text-2xl"></i>
+                    <p>No products found for "${data.query}"</p>
+                </div>
+            `;
+        } else {
+            const resultsHtml = data.products.map(product => `
+                <a href="${product.url}" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
+                    <div class="flex items-center space-x-4">
+                        <img src="${product.image_url}" alt="${product.name}" class="w-12 h-12 object-cover rounded">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">${product.name}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">${product.description.substring(0, 60)}...</p>
+                            <p class="text-sm font-bold text-primary">${product.price.toLocaleString()} RWF</p>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+            
+            searchResultsContent.innerHTML = `
+                <div class="p-2">
+                    <div class="text-sm text-gray-500 dark:text-gray-400 px-2 py-1">
+                        Found ${data.count} result${data.count !== 1 ? 's' : ''} for "${data.query}"
+                    </div>
+                    ${resultsHtml}
+                    <div class="p-2 border-t border-gray-200 dark:border-gray-600">
+                        <a href="/products?search=${encodeURIComponent(data.query)}" 
+                           class="block text-center text-primary hover:text-secondary font-medium">
+                            View all results
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        searchResults.classList.remove('hidden');
+    }
+
+    // Hide search results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchForm.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+
+    // AI Recommendations functionality
+    const recommendationsGrid = document.getElementById('recommendationsGrid');
+    
+    if (recommendationsGrid && isAuthenticated) {
+        loadAIRecommendations();
+    }
+    
+    async function loadAIRecommendations() {
+        try {
+            const response = await fetch('/recommendations');
+            const data = await response.json();
+            
+            if (data.success && data.recommendations.length > 0) {
+                displayAIRecommendations(data.recommendations);
+            } else {
+                displayNoAIRecommendations();
+            }
+        } catch (error) {
+            console.error('Error loading AI recommendations:', error);
+            displayNoAIRecommendations();
+        }
+    }
+    
+    function displayAIRecommendations(recommendations) {
+        const recommendationsHtml = recommendations.map(product => `
+            <div class="product-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+                <div class="relative">
+                    <img src="${product.image_url}" alt="${product.name}" class="w-full h-48 object-cover">
+                    <span class="absolute top-2 right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded">
+                        ${product.type === 'personalized' ? 'AI Recommended' : 'Popular'}
+                    </span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-1">${product.name}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-2">${product.description}</p>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-bold text-lg">${product.price.toLocaleString()} RWF</span>
+                    </div>
+                    <button class="add-to-cart w-full bg-primary hover:bg-secondary text-white py-2 rounded-lg transition" 
+                            data-id="${product.id}" 
+                            data-name="${product.name}" 
+                            data-price="${product.price}">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        
+        recommendationsGrid.innerHTML = recommendationsHtml;
+        
+        // Re-attach event listeners for new add-to-cart buttons
+        attachCartEventListeners();
+    }
+    
+    function displayNoAIRecommendations() {
+        recommendationsGrid.innerHTML = `
+            <div class="col-span-full text-center py-8">
+                <i class="fas fa-lightbulb text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">No AI recommendations yet</h3>
+                <p class="text-gray-500 dark:text-gray-500 mb-4">Start shopping to get personalized AI recommendations!</p>
+                <a href="/products" class="inline-block bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition">
+                    Browse Products
+                </a>
+            </div>
+        `;
+    }
+    
+    function attachCartEventListeners() {
+        document.querySelectorAll('#recommendationsGrid .add-to-cart').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const id = e.target.getAttribute('data-id');
+                const name = e.target.getAttribute('data-name');
+                const price = e.target.getAttribute('data-price');
+                
+                try {
+                    const response = await fetch('/add_to_cart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            product_id: id,
+                            quantity: 1
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Show success notification
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center z-50';
+                        notification.innerHTML = `
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <span>Added to cart</span>
+                        `;
+                        document.body.appendChild(notification);
+                        
+                        setTimeout(() => {
+                            notification.classList.add('opacity-0', 'translate-y-2', 'transition-all', 'duration-300');
+                            setTimeout(() => notification.remove(), 300);
+                        }, 2000);
+                        
+                        // Reload page to update cart count
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        // Show error notification
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center z-50';
+                        notification.innerHTML = `
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            <span>${data.message}</span>
+                        `;
+                        document.body.appendChild(notification);
+                        
+                        setTimeout(() => {
+                            notification.classList.add('opacity-0', 'translate-y-2', 'transition-all', 'duration-300');
+                            setTimeout(() => notification.remove(), 3000);
+                        }, 3000);
+                    }
+                } catch (error) {
+                    console.error('Error adding to cart:', error);
+                }
+            });
+        });
+    }
+
+    // Add to cart functionality
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            const name = e.target.getAttribute('data-name');
+            const price = e.target.getAttribute('data-price');
+            
+            try {
+                const response = await fetch('/add_to_cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        product_id: id,
+                        quantity: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center z-50';
+                    notification.innerHTML = `
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span>Added to cart</span>
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.classList.add('opacity-0', 'translate-y-2', 'transition-all', 'duration-300');
+                        setTimeout(() => notification.remove(), 300);
+                    }, 2000);
+                    
+                    // Reload page to update cart count
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    // Show error notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center z-50';
+                    notification.innerHTML = `
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span>${data.message}</span>
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.classList.add('opacity-0', 'translate-y-2', 'transition-all', 'duration-300');
+                        setTimeout(() => notification.remove(), 3000);
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Edit Product{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 dark:bg-gray-800 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Edit Product</h1>
+                <p class="text-gray-600 dark:text-gray-400">Update product information</p>
+            </div>
+
+            <!-- Edit Product Form -->
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                <form method="POST" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Product Name *
+                            </label>
+                            <input type="text" id="name" name="name" required
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                                   value="{{ product.name }}">
+                        </div>
+
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Category *
+                            </label>
+                            <select id="category" name="category" required
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                <option value="tires" {% if product.category == 'tires' %}selected{% endif %}>Tires</option>
+                                <option value="batteries" {% if product.category == 'batteries' %}selected{% endif %}>Batteries</option>
+                                <option value="brakes" {% if product.category == 'brakes' %}selected{% endif %}>Brakes</option>
+                                <option value="suspension" {% if product.category == 'suspension' %}selected{% endif %}>Suspension</option>
+                                <option value="oils" {% if product.category == 'oils' %}selected{% endif %}>Engine Oils</option>
+                                <option value="wipers" {% if product.category == 'wipers' %}selected{% endif %}>Wipers</option>
+                                <option value="lights" {% if product.category == 'lights' %}selected{% endif %}>Lights</option>
+                                <option value="filters" {% if product.category == 'filters' %}selected{% endif %}>Filters</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Description *
+                        </label>
+                        <textarea id="description" name="description" rows="3" required
+                                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">{{ product.description }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Price (RWF) *
+                            </label>
+                            <input type="number" id="price" name="price" step="0.01" min="0" required
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                                   value="{{ product.price }}">
+                        </div>
+
+                        <div>
+                            <label for="stock" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Stock Quantity *
+                            </label>
+                            <input type="number" id="stock" name="stock" min="0" required
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                                   value="{{ product.stock }}">
+                        </div>
+
+                        <div>
+                            <label for="image_url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Image URL *
+                            </label>
+                            <input type="url" id="image_url" name="image_url" required
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                                   value="{{ product.image_url }}">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is_featured" name="is_featured"
+                               class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                               {% if product.is_featured %}checked{% endif %}>
+                        <label for="is_featured" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                            Mark as featured product
+                        </label>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <button type="submit" 
+                                class="flex-1 bg-primary hover:bg-secondary text-white py-3 px-6 rounded-lg font-medium transition">
+                            <i class="fas fa-save mr-2"></i>Update Product
+                        </button>
+                        <a href="{{ url_for('admin_products') }}" 
+                           class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-3 px-6 rounded-lg font-medium transition text-center hover:bg-gray-50 dark:hover:bg-gray-600">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Back to Products -->
+            <div class="mt-8 text-center">
+                <a href="{{ url_for('admin_products') }}" 
+                   class="text-primary hover:text-secondary font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Products
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

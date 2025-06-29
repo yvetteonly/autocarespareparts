@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Track Package - Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 dark:bg-gray-800 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Track Package</h1>
+                <p class="text-gray-600 dark:text-gray-400">Order #{{ order.id }} - {{ tracking.status }}</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Tracking Information -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Current Status -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4">Current Status</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                                    <i class="fas fa-truck text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ tracking.status }}</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">{{ tracking.description }}</p>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-clock text-blue-600"></i>
+                                    <span class="text-blue-800 dark:text-blue-200 font-medium">Estimated Delivery: {{ tracking.estimated_delivery }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tracking Timeline -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-6">Tracking Timeline</h2>
+                        <div class="space-y-6">
+                            {% for step in tracking.steps %}
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center 
+                                        {% if step.completed %}bg-green-500{% else %}bg-gray-300 dark:bg-gray-600{% endif %}">
+                                        {% if step.completed %}
+                                            <i class="fas fa-check text-white text-sm"></i>
+                                        {% else %}
+                                            <i class="fas fa-circle text-gray-400 text-sm"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900 dark:text-white 
+                                        {% if step.completed %}text-green-600{% endif %}">
+                                        {{ step.status }}
+                                    </h3>
+                                    {% if step.date %}
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ step.date }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if not loop.last %}
+                            <div class="ml-4 border-l-2 border-gray-200 dark:border-gray-600 h-6"></div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="space-y-6">
+                    <!-- Order Summary -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Order ID</span>
+                                <span class="font-medium text-gray-900 dark:text-white">#{{ order.id }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Order Date</span>
+                                <span class="font-medium text-gray-900 dark:text-white">{{ order.created_at.strftime('%B %d, %Y') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Items</span>
+                                <span class="font-medium text-gray-900 dark:text-white">{{ order.items|length }}</span>
+                            </div>
+                            <hr class="border-gray-200 dark:border-gray-600">
+                            <div class="flex justify-between">
+                                <span class="text-lg font-semibold text-gray-900 dark:text-white">Total</span>
+                                <span class="text-lg font-bold text-primary">{{ order.total_amount|int }} RWF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Actions -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4">Order Actions</h2>
+                        <div class="space-y-3">
+                            <a href="{{ url_for('order_detail', order_id=order.id) }}" 
+                               class="w-full bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg font-medium transition flex items-center justify-center">
+                                <i class="fas fa-eye mr-2"></i>View Order Details
+                            </a>
+                            <a href="{{ url_for('download_invoice', order_id=order.id) }}" 
+                               class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center justify-center">
+                                <i class="fas fa-download mr-2"></i>Download Invoice
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">Need Help?</h3>
+                        <p class="text-blue-800 dark:text-blue-200 text-sm mb-4">
+                            If you have any questions about your order or delivery, please contact our support team.
+                        </p>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-phone text-blue-600"></i>
+                                <span class="text-blue-800 dark:text-blue-200">+250 123 456 789</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-envelope text-blue-600"></i>
+                                <span class="text-blue-800 dark:text-blue-200">support@sandcy.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex justify-between items-center">
+                <a href="{{ url_for('orders') }}" 
+                   class="text-primary hover:text-secondary font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Orders
+                </a>
+                <div class="flex space-x-4">
+                    <a href="{{ url_for('home') }}" 
+                       class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition">
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

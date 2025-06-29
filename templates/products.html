@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Products - AutoPartsPro{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 dark:bg-gray-800 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                {% if current_category == 'all' %}
+                    All Products
+                {% else %}
+                    {{ current_category|title }}
+                {% endif %}
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+                {% if current_category == 'all' %}
+                    Browse our complete collection of automotive parts and accessories
+                {% else %}
+                    Find the perfect {{ current_category }} for your vehicle
+                {% endif %}
+            </p>
+            
+            <!-- Search Form -->
+            <div class="max-w-md">
+                <form method="GET" action="{{ url_for('products') }}" class="flex">
+                    <input type="text" name="search" value="{{ request.args.get('search', '') }}" 
+                           placeholder="Search products..." 
+                           class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <button type="submit" class="px-6 py-2 bg-primary hover:bg-secondary text-white rounded-r-lg transition">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="mb-8">
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ url_for('products') }}" 
+                   class="px-4 py-2 rounded-lg font-medium transition {% if current_category == 'all' %}bg-primary text-white{% else %}bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600{% endif %}">
+                    All Categories
+                </a>
+                {% for category in categories %}
+                    <a href="{{ url_for('products', category=category) }}" 
+                       class="px-4 py-2 rounded-lg font-medium transition {% if current_category == category %}bg-primary text-white{% else %}bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600{% endif %}">
+                        {{ category|title }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        {% if products %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for product in products %}
+                <div class="product-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="relative">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
+                        {% if product.category == 'tires' %}
+                            <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">Sale</span>
+                        {% elif product.category == 'oils' %}
+                            <span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">Popular</span>
+                        {% elif product.category == 'lights' %}
+                            <span class="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">New</span>
+                        {% endif %}
+                        {% if product.stock < 10 and product.stock > 0 %}
+                            <span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">Low Stock</span>
+                        {% elif product.stock == 0 %}
+                            <span class="absolute top-2 left-2 bg-gray-500 text-white text-xs px-2 py-1 rounded">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-1">{{ product.name }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-2">{{ product.description }}</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-lg">{{ product.price|int }} RWF</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">
+                                Stock: {{ product.stock }}
+                            </span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                               class="flex-1 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 py-2 rounded-lg transition text-center text-sm">
+                                View Details
+                            </a>
+                            {% if current_user.is_authenticated %}
+                                {% if product.stock > 0 %}
+                                    <button class="add-to-cart bg-primary hover:bg-secondary text-white py-2 px-4 rounded-lg transition text-sm" 
+                                            data-id="{{ product.id }}" 
+                                            data-name="{{ product.name }}" 
+                                            data-price="{{ product.price }}">
+                                        Add to Cart
+                                    </button>
+                                {% else %}
+                                    <button class="bg-gray-400 text-white py-2 px-4 rounded-lg text-sm cursor-not-allowed" disabled>
+                                        Out of Stock
+                                    </button>
+                                {% endif %}
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-lg transition text-sm">
+                                    Login to Buy
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-box-open text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No products found</h3>
+                <p class="text-gray-500 dark:text-gray-500">Try selecting a different category or check back later.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add to cart functionality
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            const name = e.target.getAttribute('data-name');
+            const price = e.target.getAttribute('data-price');
+            
+            // Disable button to prevent double-clicking
+            e.target.disabled = true;
+            e.target.textContent = 'Adding...';
+            
+            try {
+                const response = await fetch('/add_to_cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        product_id: id,
+                        quantity: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center z-50';
+                    notification.innerHTML = `
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span>Added to cart</span>
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.classList.add('opacity-0', 'translate-y-2', 'transition-all', 'duration-300');
+                        setTimeout(() => notification.remove(), 300);
+                    }, 2000);
+                    
+                    // Reload page to update cart count
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                // Re-enable button on error
+                e.target.disabled = false;
+                e.target.textContent = 'Add to Cart';
+            }
+        });
+    });
+</script>
+{% endblock %} 
