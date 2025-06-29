@@ -1813,7 +1813,7 @@ def process_momopay_payment():
         # Calculate total
         subtotal = sum(item['price'] * item['quantity'] for item in session['cart'].values())
         shipping_cost = 10000
-        tax = subtotal * 0.01
+        tax = subtotal * 0.08
         total_amount = subtotal + shipping_cost + tax
         
         # Generate unique transaction reference
@@ -1984,6 +1984,8 @@ def process_flutterwave_payment():
         session['payment_method'] = payment_method
         session['tx_ref'] = tx_ref
         
+        # Flutterwave configuration (use test keys for development)
+        # In production, use actual Flutterwave keys from config
         flutterwave_config = {
             'public_key': 'FLWPUBK-0c4347ddda625a4f63c27b43005889bc-X', 
             'tx_ref': tx_ref,

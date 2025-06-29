@@ -257,6 +257,7 @@
         const response = await fetch('/process_flutterwave_payment', {
             method: 'POST',
             headers: {
+                "Authorization": "Bearer FLWSECK-ef7734afb2dca1415a831364155f13e4-19140fe2419vt-X",  
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({

@@ -9,9 +9,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Flutterwave Configuration
-    FLUTTERWAVE_PUBLIC_KEY = os.environ.get('FLWPUBK-0c4347ddda625a4f63c27b43005889bc-X')
-    FLUTTERWAVE_SECRET_KEY = os.environ.get('FLWSECK-ef7734afb2dca1415a831364155f13e4-19140fe2419vt-X')
-    # FLUTTERWAVE_WEBHOOK_SECRET = os.environ.get('FLUTTERWAVE_WEBHOOK_SECRET') 
+    FLUTTERWAVE_PUBLIC_KEY = os.environ.get('FLWPUBK-0c4347ddda625a4f63c27b43005889bc-X') or 'FLWPUBK_TEST-1234567890abcdef'
+    FLUTTERWAVE_SECRET_KEY = os.environ.get('FLWSECK-ef7734afb2dca1415a831364155f13e4-19140fe2419vt-X') or 'FLWSECK_TEST-1234567890abcdef'
+    # FLUTTERWAVE_WEBHOOK_SECRET = os.environ.get('FLUTTERWAVE_WEBHOOK_SECRET') or 'test_webhook_secret'
     
     # MoMoPay Configuration (for future integration)
     MOMOPAY_API_KEY = os.environ.get('MOMOPAY_API_KEY') or 'test_momopay_key'
