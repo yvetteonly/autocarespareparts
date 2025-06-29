@@ -44,6 +44,118 @@
                         </div>
                     </div>
 
+                    <!-- Tire-specific fields (hidden by default) -->
+                    <div id="tire-fields" class="hidden space-y-6 p-4 bg-gray-50 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-500">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tire Specifications</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label for="tire_width" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Width (mm) *
+                                </label>
+                                <select id="tire_width" name="tire_width"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Width</option>
+                                    <option value="165">165</option>
+                                    <option value="175">175</option>
+                                    <option value="185">185</option>
+                                    <option value="195">195</option>
+                                    <option value="205">205</option>
+                                    <option value="215">215</option>
+                                    <option value="225">225</option>
+                                    <option value="235">235</option>
+                                    <option value="245">245</option>
+                                    <option value="255">255</option>
+                                    <option value="265">265</option>
+                                    <option value="275">275</option>
+                                    <option value="285">285</option>
+                                    <option value="295">295</option>
+                                    <option value="305">305</option>
+                                    <option value="315">315</option>
+                                    <option value="325">325</option>
+                                    <option value="335">335</option>
+                                    <option value="345">345</option>
+                                    <option value="355">355</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="tire_aspect_ratio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Aspect Ratio *
+                                </label>
+                                <select id="tire_aspect_ratio" name="tire_aspect_ratio"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Ratio</option>
+                                    <option value="30">30</option>
+                                    <option value="35">35</option>
+                                    <option value="40">40</option>
+                                    <option value="45">45</option>
+                                    <option value="50">50</option>
+                                    <option value="55">55</option>
+                                    <option value="60">60</option>
+                                    <option value="65">65</option>
+                                    <option value="70">70</option>
+                                    <option value="75">75</option>
+                                    <option value="80">80</option>
+                                    <option value="85">85</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="tire_rim_size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Rim Size (inches) *
+                                </label>
+                                <select id="tire_rim_size" name="tire_rim_size"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Size</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="tire_brand" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Brand *
+                                </label>
+                                <select id="tire_brand" name="tire_brand"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Brand</option>
+                                    <option value="Michelin">Michelin</option>
+                                    <option value="Bridgestone">Bridgestone</option>
+                                    <option value="Goodyear">Goodyear</option>
+                                    <option value="Continental">Continental</option>
+                                    <option value="Pirelli">Pirelli</option>
+                                    <option value="Dunlop">Dunlop</option>
+                                    <option value="Yokohama">Yokohama</option>
+                                    <option value="Hankook">Hankook</option>
+                                    <option value="BFGoodrich">BFGoodrich</option>
+                                    <option value="Firestone">Firestone</option>
+                                    <option value="Cooper">Cooper</option>
+                                    <option value="Toyo">Toyo</option>
+                                    <option value="Kumho">Kumho</option>
+                                    <option value="Nexen">Nexen</option>
+                                    <option value="Maxxis">Maxxis</option>
+                                    <option value="Falken">Falken</option>
+                                    <option value="Nitto">Nitto</option>
+                                    <option value="General">General</option>
+                                    <option value="Uniroyal">Uniroyal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div>
                         <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Description *
@@ -113,4 +225,44 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category');
+    const tireFields = document.getElementById('tire-fields');
+    const tireWidthSelect = document.getElementById('tire_width');
+    const tireAspectRatioSelect = document.getElementById('tire_aspect_ratio');
+    const tireRimSizeSelect = document.getElementById('tire_rim_size');
+    const tireBrandSelect = document.getElementById('tire_brand');
+
+    function toggleTireFields() {
+        if (categorySelect.value === 'tires') {
+            tireFields.classList.remove('hidden');
+            // Make tire fields required when visible
+            tireWidthSelect.required = true;
+            tireAspectRatioSelect.required = true;
+            tireRimSizeSelect.required = true;
+            tireBrandSelect.required = true;
+        } else {
+            tireFields.classList.add('hidden');
+            // Remove required when hidden
+            tireWidthSelect.required = false;
+            tireAspectRatioSelect.required = false;
+            tireRimSizeSelect.required = false;
+            tireBrandSelect.required = false;
+            // Clear values when hidden
+            tireWidthSelect.value = '';
+            tireAspectRatioSelect.value = '';
+            tireRimSizeSelect.value = '';
+            tireBrandSelect.value = '';
+        }
+    }
+
+    // Initial check
+    toggleTireFields();
+
+    // Listen for category changes
+    categorySelect.addEventListener('change', toggleTireFields);
+});
+</script>
 {% endblock %} 

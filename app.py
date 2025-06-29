@@ -85,6 +85,12 @@ class Product(db.Model):
     stock = db.Column(db.Integer, default=0)
     is_featured = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Tire-specific fields
+    tire_width = db.Column(db.String(10))
+    tire_aspect_ratio = db.Column(db.String(10))
+    tire_rim_size = db.Column(db.String(10))
+    tire_brand = db.Column(db.String(50))
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -1261,6 +1267,12 @@ def admin_add_product():
         stock = int(request.form['stock'])
         is_featured = 'is_featured' in request.form
         
+        # Handle tire-specific fields
+        tire_width = request.form.get('tire_width', '') if category == 'tires' else None
+        tire_aspect_ratio = request.form.get('tire_aspect_ratio', '') if category == 'tires' else None
+        tire_rim_size = request.form.get('tire_rim_size', '') if category == 'tires' else None
+        tire_brand = request.form.get('tire_brand', '') if category == 'tires' else None
+        
         product = Product(
             name=name,
             description=description,
@@ -1268,7 +1280,11 @@ def admin_add_product():
             category=category,
             image_url=image_url,
             stock=stock,
-            is_featured=is_featured
+            is_featured=is_featured,
+            tire_width=tire_width,
+            tire_aspect_ratio=tire_aspect_ratio,
+            tire_rim_size=tire_rim_size,
+            tire_brand=tire_brand
         )
         
         db.session.add(product)
@@ -1293,6 +1309,19 @@ def admin_edit_product(product_id):
         product.image_url = request.form['image_url']
         product.stock = int(request.form['stock'])
         product.is_featured = 'is_featured' in request.form
+        
+        # Handle tire-specific fields
+        if product.category == 'tires':
+            product.tire_width = request.form.get('tire_width', '')
+            product.tire_aspect_ratio = request.form.get('tire_aspect_ratio', '')
+            product.tire_rim_size = request.form.get('tire_rim_size', '')
+            product.tire_brand = request.form.get('tire_brand', '')
+        else:
+            # Clear tire fields if category is not tires
+            product.tire_width = None
+            product.tire_aspect_ratio = None
+            product.tire_rim_size = None
+            product.tire_brand = None
         
         db.session.commit()
         
@@ -1695,6 +1724,76 @@ def rebuild_recommendations():
 # ============================================================================
 # END RECOMMENDATION ROUTES
 # ============================================================================
+
+@app.route('/tire_filter', methods=['GET', 'POST'])
+def tire_filter():
+    """Handle tire filtering by size and brand"""
+    if request.method == 'POST':
+        data = request.get_json()
+        width = data.get('width')
+        aspect_ratio = data.get('aspect_ratio')
+        rim_size = data.get('rim_size')
+        brand = data.get('brand')
+        
+        # Build query for tire products
+        query = Product.query.filter_by(category='tires')
+        
+        # Apply filters if provided
+        if width and width != 'Select Width':
+            query = query.filter_by(tire_width=width)
+        if aspect_ratio and aspect_ratio != 'Select Ratio':
+            query = query.filter_by(tire_aspect_ratio=aspect_ratio)
+        if rim_size and rim_size != 'Select Rim':
+            query = query.filter_by(tire_rim_size=rim_size)
+        if brand and brand != 'Select Brand':
+            query = query.filter_by(tire_brand=brand)
+        
+        # Get filtered products
+        products = query.all()
+        
+        # Convert to JSON-serializable format
+        products_data = []
+        for product in products:
+            products_data.append({
+                'id': product.id,
+                'name': product.name,
+                'description': product.description,
+                'price': product.price,
+                'image_url': product.image_url,
+                'tire_width': product.tire_width,
+                'tire_aspect_ratio': product.tire_aspect_ratio,
+                'tire_rim_size': product.tire_rim_size,
+                'tire_brand': product.tire_brand,
+                'stock': product.stock
+            })
+        
+        return jsonify({
+            'success': True,
+            'products': products_data,
+            'count': len(products_data)
+        })
+    
+    # GET request - redirect to products page with tire category
+    return redirect(url_for('products', category='tires'))
+
+@app.route('/tire_filter_options')
+def tire_filter_options():
+    """Get available tire filter options for dropdowns"""
+    # Get all tire products
+    tires = Product.query.filter_by(category='tires').all()
+    
+    # Extract unique values for each filter
+    widths = sorted(list(set(tire.tire_width for tire in tires if tire.tire_width)))
+    aspect_ratios = sorted(list(set(tire.tire_aspect_ratio for tire in tires if tire.tire_aspect_ratio)))
+    rim_sizes = sorted(list(set(tire.tire_rim_size for tire in tires if tire.tire_rim_size)))
+    brands = sorted(list(set(tire.tire_brand for tire in tires if tire.tire_brand)))
+    
+    return jsonify({
+        'widths': widths,
+        'aspect_ratios': aspect_ratios,
+        'rim_sizes': rim_sizes,
+        'brands': brands
+    })
 
 if __name__ == '__main__':
     with app.app_context():

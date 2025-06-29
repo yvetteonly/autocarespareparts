@@ -96,6 +96,51 @@
                             </div>
                         </div>
 
+                        <!-- Tire Specifications (only for tires) -->
+                        {% if product.category == 'tires' and (product.tire_width or product.tire_aspect_ratio or product.tire_rim_size or product.tire_brand) %}
+                        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-500">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Tire Specifications</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {% if product.tire_width %}
+                                <div>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Width:</span>
+                                    <p class="text-gray-900 dark:text-white font-semibold">{{ product.tire_width }} mm</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if product.tire_aspect_ratio %}
+                                <div>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Aspect Ratio:</span>
+                                    <p class="text-gray-900 dark:text-white font-semibold">{{ product.tire_aspect_ratio }}</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if product.tire_rim_size %}
+                                <div>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Rim Size:</span>
+                                    <p class="text-gray-900 dark:text-white font-semibold">{{ product.tire_rim_size }}"</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if product.tire_brand %}
+                                <div>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Brand:</span>
+                                    <p class="text-gray-900 dark:text-white font-semibold">{{ product.tire_brand }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if product.tire_width and product.tire_aspect_ratio and product.tire_rim_size %}
+                            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-500">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Tire Size:</span>
+                                <p class="text-gray-900 dark:text-white font-semibold text-lg">
+                                    {{ product.tire_width }}/{{ product.tire_aspect_ratio }}R{{ product.tire_rim_size }}
+                                </p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
                         <!-- Add to Cart Section -->
                         <div class="space-y-4">
                             {% if current_user.is_authenticated %}

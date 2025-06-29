@@ -90,67 +90,65 @@
         <h2 class="text-3xl font-bold text-center mb-8">Find Tires by Size</h2>
         
         <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 max-w-4xl mx-auto">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <!-- Width Selector -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Width (mm)</label>
-                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
-                        <option>Select Width</option>
-                        <option>165</option>
-                        <option>175</option>
-                        <option>185</option>
-                        <option>195</option>
-                        <option>205</option>
-                        <option>215</option>
-                        <option>225</option>
-                    </select>
+            <form id="tireFilterForm" class="space-y-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Width Selector -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Width (mm)</label>
+                        <select id="tireWidth" name="width" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                            <option value="">Select Width</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Aspect Ratio Selector -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Aspect Ratio</label>
+                        <select id="tireAspectRatio" name="aspect_ratio" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                            <option value="">Select Ratio</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Rim Size Selector -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Rim Size</label>
+                        <select id="tireRimSize" name="rim_size" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                            <option value="">Select Rim</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Brand Selector -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Brand</label>
+                        <select id="tireBrand" name="brand" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                            <option value="">Select Brand</option>
+                        </select>
+                    </div>
                 </div>
                 
-                <!-- Aspect Ratio Selector -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Aspect Ratio</label>
-                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
-                        <option>Select Ratio</option>
-                        <option>45</option>
-                        <option>50</option>
-                        <option>55</option>
-                        <option>60</option>
-                        <option>65</option>
-                        <option>70</option>
-                    </select>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button type="submit" id="findTiresBtn" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg font-medium transition flex items-center">
+                        <i class="fas fa-search mr-2"></i>
+                        Find Tires
+                    </button>
+                    <button type="button" id="clearFiltersBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition">
+                        Clear Filters
+                    </button>
                 </div>
-                
-                <!-- Rim Size Selector -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Rim Size</label>
-                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
-                        <option>Select Rim</option>
-                        <option>R13</option>
-                        <option>R14</option>
-                        <option>R15</option>
-                        <option>R16</option>
-                        <option>R17</option>
-                        <option>R18</option>
-                    </select>
-                </div>
-                
-                <!-- Brand Selector -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Brand</label>
-                    <select class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
-                        <option>Select Brand</option>
-                        <option>Michelin</option>
-                        <option>Bridgestone</option>
-                        <option>Goodyear</option>
-                        <option>Pirelli</option>
-                        <option>Continental</option>
-                        <option>Yokohama</option>
-                    </select>
-                </div>
-            </div>
+            </form>
             
-            <div class="mt-6 text-center">
-                <a href="{{ url_for('products', category='tires') }}" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg font-medium transition">Find Tires</a>
+            <!-- Filter Results Section -->
+            <div id="tireFilterResults" class="mt-8 hidden">
+                <div class="border-t border-gray-300 dark:border-gray-600 pt-6">
+                    <h3 class="text-xl font-semibold mb-4">Filter Results</h3>
+                    <div id="tireResultsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <!-- Results will be populated here -->
+                    </div>
+                    <div id="noTireResults" class="text-center py-8 hidden">
+                        <i class="fas fa-tire text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">No tires found</h3>
+                        <p class="text-gray-500 dark:text-gray-500 mb-4">Try adjusting your filter criteria</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -159,9 +157,9 @@
 <!-- Featured Products Section -->
 <section id="products" class="py-12 bg-gray-100 dark:bg-gray-800">
     <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-8">Featured Products</h2>
+        <h2 class="text-3xl font-bold text-center mb-8">Available Products</h2>
         
-        <div class="flex justify-center mb-8">
+        <!-- <div class="flex justify-center mb-8">
             <div class="flex space-x-2 bg-white dark:bg-gray-700 p-1 rounded-lg">
                 <a href="{{ url_for('products') }}" class="px-4 py-2 rounded-md bg-primary text-white">All</a>
                 <a href="{{ url_for('products', category='tires') }}" class="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Tires</a>
@@ -169,7 +167,7 @@
                 <a href="{{ url_for('products', category='brakes') }}" class="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Brakes</a>
                 <a href="{{ url_for('products', category='oils') }}" class="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Oils</a>
             </div>
-        </div>
+        </div> -->
         
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {% for product in products %}
@@ -570,5 +568,254 @@
             }
         });
     });
+
+    // ============================================================================
+    // TIRE FILTER FUNCTIONALITY
+    // ============================================================================
+    
+    // Tire filter elements
+    const tireFilterForm = document.getElementById('tireFilterForm');
+    const tireWidth = document.getElementById('tireWidth');
+    const tireAspectRatio = document.getElementById('tireAspectRatio');
+    const tireRimSize = document.getElementById('tireRimSize');
+    const tireBrand = document.getElementById('tireBrand');
+    const findTiresBtn = document.getElementById('findTiresBtn');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    const tireFilterResults = document.getElementById('tireFilterResults');
+    const tireResultsGrid = document.getElementById('tireResultsGrid');
+    const noTireResults = document.getElementById('noTireResults');
+    
+    // Load tire filter options on page load
+    if (tireFilterForm) {
+        loadTireFilterOptions();
+    }
+    
+    // Load available tire filter options
+    async function loadTireFilterOptions() {
+        try {
+            const response = await fetch('/tire_filter_options');
+            const data = await response.json();
+            
+            // Populate width options
+            if (data.widths && data.widths.length > 0) {
+                data.widths.forEach(width => {
+                    const option = document.createElement('option');
+                    option.value = width;
+                    option.textContent = width;
+                    tireWidth.appendChild(option);
+                });
+            }
+            
+            // Populate aspect ratio options
+            if (data.aspect_ratios && data.aspect_ratios.length > 0) {
+                data.aspect_ratios.forEach(ratio => {
+                    const option = document.createElement('option');
+                    option.value = ratio;
+                    option.textContent = ratio;
+                    tireAspectRatio.appendChild(option);
+                });
+            }
+            
+            // Populate rim size options
+            if (data.rim_sizes && data.rim_sizes.length > 0) {
+                data.rim_sizes.forEach(size => {
+                    const option = document.createElement('option');
+                    option.value = size;
+                    option.textContent = size;
+                    tireRimSize.appendChild(option);
+                });
+            }
+            
+            // Populate brand options
+            if (data.brands && data.brands.length > 0) {
+                data.brands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    option.textContent = brand;
+                    tireBrand.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading tire filter options:', error);
+        }
+    }
+    
+    // Handle tire filter form submission
+    if (tireFilterForm) {
+        tireFilterForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            findTiresBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Searching...';
+            findTiresBtn.disabled = true;
+            
+            // Get filter values
+            const filters = {
+                width: tireWidth.value,
+                aspect_ratio: tireAspectRatio.value,
+                rim_size: tireRimSize.value,
+                brand: tireBrand.value
+            };
+            
+            try {
+                const response = await fetch('/tire_filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(filters)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTireFilterResults(data.products);
+                } else {
+                    displayNoTireResults();
+                }
+            } catch (error) {
+                console.error('Error filtering tires:', error);
+                displayNoTireResults();
+            } finally {
+                // Reset button state
+                findTiresBtn.innerHTML = '<i class="fas fa-search mr-2"></i>Find Tires';
+                findTiresBtn.disabled = false;
+            }
+        });
+    }
+    
+    // Handle clear filters button
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', () => {
+            // Reset all select elements
+            tireWidth.value = '';
+            tireAspectRatio.value = '';
+            tireRimSize.value = '';
+            tireBrand.value = '';
+            
+            // Hide results
+            tireFilterResults.classList.add('hidden');
+        });
+    }
+    
+    // Display tire filter results
+    function displayTireFilterResults(products) {
+        if (products.length === 0) {
+            displayNoTireResults();
+            return;
+        }
+        
+        const resultsHtml = products.map(product => `
+            <div class="product-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+                <div class="relative">
+                    <img src="${product.image_url}" alt="${product.name}" class="w-full h-48 object-cover">
+                    <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">Sale</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-1">${product.name}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-2">${product.description}</p>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                        ${product.tire_width ? `Width: ${product.tire_width}mm` : ''}
+                        ${product.tire_aspect_ratio ? ` | Ratio: ${product.tire_aspect_ratio}` : ''}
+                        ${product.tire_rim_size ? ` | Rim: ${product.tire_rim_size}` : ''}
+                        ${product.tire_brand ? ` | Brand: ${product.tire_brand}` : ''}
+                    </div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-bold text-lg">${product.price.toLocaleString()} RWF</span>
+                        <span class="text-sm text-gray-500">Stock: ${product.stock}</span>
+                    </div>
+                    ${isAuthenticated ? `
+                        <button class="add-to-cart w-full bg-primary hover:bg-secondary text-white py-2 rounded-lg transition" 
+                                data-id="${product.id}" 
+                                data-name="${product.name}" 
+                                data-price="${product.price}">
+                            Add to Cart
+                        </button>
+                    ` : `
+                        <a href="/login" class="block w-full bg-primary hover:bg-secondary text-white py-2 rounded-lg transition text-center">
+                            Login to Add to Cart
+                        </a>
+                    `}
+                </div>
+            </div>
+        `).join('');
+        
+        tireResultsGrid.innerHTML = resultsHtml;
+        tireFilterResults.classList.remove('hidden');
+        noTireResults.classList.add('hidden');
+        
+        // Re-attach event listeners for new add-to-cart buttons
+        attachTireCartEventListeners();
+    }
+    
+    // Display no results message
+    function displayNoTireResults() {
+        tireResultsGrid.innerHTML = '';
+        tireFilterResults.classList.remove('hidden');
+        noTireResults.classList.remove('hidden');
+    }
+    
+    // Attach cart event listeners to tire filter results
+    function attachTireCartEventListeners() {
+        document.querySelectorAll('#tireResultsGrid .add-to-cart').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const id = e.target.getAttribute('data-id');
+                const name = e.target.getAttribute('data-name');
+                const price = e.target.getAttribute('data-price');
+                
+                try {
+                    const response = await fetch('/add_to_cart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            product_id: id,
+                            quantity: 1
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Show success notification
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center z-50';
+                        notification.innerHTML = `
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <span>Added to cart</span>
+                        `;
+                        document.body.appendChild(notification);
+                        
+                        setTimeout(() => {
+                            notification.classList.add('opacity-0', 'translate-y-2', 'transition-all', 'duration-300');
+                            setTimeout(() => notification.remove(), 300);
+                        }, 2000);
+                        
+                        // Reload page to update cart count
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        // Show error notification
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center z-50';
+                        notification.innerHTML = `
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            <span>${data.message}</span>
+                        `;
+                        document.body.appendChild(notification);
+                        
+                        setTimeout(() => {
+                            notification.classList.add('opacity-0', 'translate-y-2', 'transition-all', 'duration-300');
+                            setTimeout(() => notification.remove(), 3000);
+                        }, 3000);
+                    }
+                } catch (error) {
+                    console.error('Error adding to cart:', error);
+                }
+            });
+        });
+    }
 </script>
 {% endblock %}

@@ -31,6 +31,7 @@
                             </label>
                             <select id="category" name="category" required
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                <option value="">Select Category</option>
                                 <option value="tires" {% if product.category == 'tires' %}selected{% endif %}>Tires</option>
                                 <option value="batteries" {% if product.category == 'batteries' %}selected{% endif %}>Batteries</option>
                                 <option value="brakes" {% if product.category == 'brakes' %}selected{% endif %}>Brakes</option>
@@ -40,6 +41,118 @@
                                 <option value="lights" {% if product.category == 'lights' %}selected{% endif %}>Lights</option>
                                 <option value="filters" {% if product.category == 'filters' %}selected{% endif %}>Filters</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Tire-specific fields (hidden by default) -->
+                    <div id="tire-fields" class="hidden space-y-6 p-4 bg-gray-50 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-500">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tire Specifications</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label for="tire_width" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Width (mm) *
+                                </label>
+                                <select id="tire_width" name="tire_width"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Width</option>
+                                    <option value="165" {% if product.tire_width == '165' %}selected{% endif %}>165</option>
+                                    <option value="175" {% if product.tire_width == '175' %}selected{% endif %}>175</option>
+                                    <option value="185" {% if product.tire_width == '185' %}selected{% endif %}>185</option>
+                                    <option value="195" {% if product.tire_width == '195' %}selected{% endif %}>195</option>
+                                    <option value="205" {% if product.tire_width == '205' %}selected{% endif %}>205</option>
+                                    <option value="215" {% if product.tire_width == '215' %}selected{% endif %}>215</option>
+                                    <option value="225" {% if product.tire_width == '225' %}selected{% endif %}>225</option>
+                                    <option value="235" {% if product.tire_width == '235' %}selected{% endif %}>235</option>
+                                    <option value="245" {% if product.tire_width == '245' %}selected{% endif %}>245</option>
+                                    <option value="255" {% if product.tire_width == '255' %}selected{% endif %}>255</option>
+                                    <option value="265" {% if product.tire_width == '265' %}selected{% endif %}>265</option>
+                                    <option value="275" {% if product.tire_width == '275' %}selected{% endif %}>275</option>
+                                    <option value="285" {% if product.tire_width == '285' %}selected{% endif %}>285</option>
+                                    <option value="295" {% if product.tire_width == '295' %}selected{% endif %}>295</option>
+                                    <option value="305" {% if product.tire_width == '305' %}selected{% endif %}>305</option>
+                                    <option value="315" {% if product.tire_width == '315' %}selected{% endif %}>315</option>
+                                    <option value="325" {% if product.tire_width == '325' %}selected{% endif %}>325</option>
+                                    <option value="335" {% if product.tire_width == '335' %}selected{% endif %}>335</option>
+                                    <option value="345" {% if product.tire_width == '345' %}selected{% endif %}>345</option>
+                                    <option value="355" {% if product.tire_width == '355' %}selected{% endif %}>355</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="tire_aspect_ratio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Aspect Ratio *
+                                </label>
+                                <select id="tire_aspect_ratio" name="tire_aspect_ratio"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Ratio</option>
+                                    <option value="30" {% if product.tire_aspect_ratio == '30' %}selected{% endif %}>30</option>
+                                    <option value="35" {% if product.tire_aspect_ratio == '35' %}selected{% endif %}>35</option>
+                                    <option value="40" {% if product.tire_aspect_ratio == '40' %}selected{% endif %}>40</option>
+                                    <option value="45" {% if product.tire_aspect_ratio == '45' %}selected{% endif %}>45</option>
+                                    <option value="50" {% if product.tire_aspect_ratio == '50' %}selected{% endif %}>50</option>
+                                    <option value="55" {% if product.tire_aspect_ratio == '55' %}selected{% endif %}>55</option>
+                                    <option value="60" {% if product.tire_aspect_ratio == '60' %}selected{% endif %}>60</option>
+                                    <option value="65" {% if product.tire_aspect_ratio == '65' %}selected{% endif %}>65</option>
+                                    <option value="70" {% if product.tire_aspect_ratio == '70' %}selected{% endif %}>70</option>
+                                    <option value="75" {% if product.tire_aspect_ratio == '75' %}selected{% endif %}>75</option>
+                                    <option value="80" {% if product.tire_aspect_ratio == '80' %}selected{% endif %}>80</option>
+                                    <option value="85" {% if product.tire_aspect_ratio == '85' %}selected{% endif %}>85</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="tire_rim_size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Rim Size (inches) *
+                                </label>
+                                <select id="tire_rim_size" name="tire_rim_size"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Size</option>
+                                    <option value="13" {% if product.tire_rim_size == '13' %}selected{% endif %}>13</option>
+                                    <option value="14" {% if product.tire_rim_size == '14' %}selected{% endif %}>14</option>
+                                    <option value="15" {% if product.tire_rim_size == '15' %}selected{% endif %}>15</option>
+                                    <option value="16" {% if product.tire_rim_size == '16' %}selected{% endif %}>16</option>
+                                    <option value="17" {% if product.tire_rim_size == '17' %}selected{% endif %}>17</option>
+                                    <option value="18" {% if product.tire_rim_size == '18' %}selected{% endif %}>18</option>
+                                    <option value="19" {% if product.tire_rim_size == '19' %}selected{% endif %}>19</option>
+                                    <option value="20" {% if product.tire_rim_size == '20' %}selected{% endif %}>20</option>
+                                    <option value="21" {% if product.tire_rim_size == '21' %}selected{% endif %}>21</option>
+                                    <option value="22" {% if product.tire_rim_size == '22' %}selected{% endif %}>22</option>
+                                    <option value="23" {% if product.tire_rim_size == '23' %}selected{% endif %}>23</option>
+                                    <option value="24" {% if product.tire_rim_size == '24' %}selected{% endif %}>24</option>
+                                    <option value="25" {% if product.tire_rim_size == '25' %}selected{% endif %}>25</option>
+                                    <option value="26" {% if product.tire_rim_size == '26' %}selected{% endif %}>26</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="tire_brand" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Brand *
+                                </label>
+                                <select id="tire_brand" name="tire_brand"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+                                    <option value="">Select Brand</option>
+                                    <option value="Michelin" {% if product.tire_brand == 'Michelin' %}selected{% endif %}>Michelin</option>
+                                    <option value="Bridgestone" {% if product.tire_brand == 'Bridgestone' %}selected{% endif %}>Bridgestone</option>
+                                    <option value="Goodyear" {% if product.tire_brand == 'Goodyear' %}selected{% endif %}>Goodyear</option>
+                                    <option value="Continental" {% if product.tire_brand == 'Continental' %}selected{% endif %}>Continental</option>
+                                    <option value="Pirelli" {% if product.tire_brand == 'Pirelli' %}selected{% endif %}>Pirelli</option>
+                                    <option value="Dunlop" {% if product.tire_brand == 'Dunlop' %}selected{% endif %}>Dunlop</option>
+                                    <option value="Yokohama" {% if product.tire_brand == 'Yokohama' %}selected{% endif %}>Yokohama</option>
+                                    <option value="Hankook" {% if product.tire_brand == 'Hankook' %}selected{% endif %}>Hankook</option>
+                                    <option value="BFGoodrich" {% if product.tire_brand == 'BFGoodrich' %}selected{% endif %}>BFGoodrich</option>
+                                    <option value="Firestone" {% if product.tire_brand == 'Firestone' %}selected{% endif %}>Firestone</option>
+                                    <option value="Cooper" {% if product.tire_brand == 'Cooper' %}selected{% endif %}>Cooper</option>
+                                    <option value="Toyo" {% if product.tire_brand == 'Toyo' %}selected{% endif %}>Toyo</option>
+                                    <option value="Kumho" {% if product.tire_brand == 'Kumho' %}selected{% endif %}>Kumho</option>
+                                    <option value="Nexen" {% if product.tire_brand == 'Nexen' %}selected{% endif %}>Nexen</option>
+                                    <option value="Maxxis" {% if product.tire_brand == 'Maxxis' %}selected{% endif %}>Maxxis</option>
+                                    <option value="Falken" {% if product.tire_brand == 'Falken' %}selected{% endif %}>Falken</option>
+                                    <option value="Nitto" {% if product.tire_brand == 'Nitto' %}selected{% endif %}>Nitto</option>
+                                    <option value="General" {% if product.tire_brand == 'General' %}selected{% endif %}>General</option>
+                                    <option value="Uniroyal" {% if product.tire_brand == 'Uniroyal' %}selected{% endif %}>Uniroyal</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -112,4 +225,44 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category');
+    const tireFields = document.getElementById('tire-fields');
+    const tireWidthSelect = document.getElementById('tire_width');
+    const tireAspectRatioSelect = document.getElementById('tire_aspect_ratio');
+    const tireRimSizeSelect = document.getElementById('tire_rim_size');
+    const tireBrandSelect = document.getElementById('tire_brand');
+
+    function toggleTireFields() {
+        if (categorySelect.value === 'tires') {
+            tireFields.classList.remove('hidden');
+            // Make tire fields required when visible
+            tireWidthSelect.required = true;
+            tireAspectRatioSelect.required = true;
+            tireRimSizeSelect.required = true;
+            tireBrandSelect.required = true;
+        } else {
+            tireFields.classList.add('hidden');
+            // Remove required when hidden
+            tireWidthSelect.required = false;
+            tireAspectRatioSelect.required = false;
+            tireRimSizeSelect.required = false;
+            tireBrandSelect.required = false;
+            // Clear values when hidden
+            tireWidthSelect.value = '';
+            tireAspectRatioSelect.value = '';
+            tireRimSizeSelect.value = '';
+            tireBrandSelect.value = '';
+        }
+    }
+
+    // Initial check
+    toggleTireFields();
+
+    // Listen for category changes
+    categorySelect.addEventListener('change', toggleTireFields);
+});
+</script>
 {% endblock %} 
