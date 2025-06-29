@@ -1795,6 +1795,354 @@ def tire_filter_options():
         'brands': brands
     })
 
+# ============================================================================
+# PAYMENT PROCESSING ROUTES
+# ============================================================================
+
+@app.route('/process_momopay_payment', methods=['POST'])
+@login_required
+def process_momopay_payment():
+    """Process MoMoPay payment"""
+    try:
+        data = request.get_json()
+        
+        # Validate cart
+        if 'cart' not in session or not session['cart']:
+            return jsonify({'success': False, 'message': 'Cart is empty'}), 400
+        
+        # Calculate total
+        subtotal = sum(item['price'] * item['quantity'] for item in session['cart'].values())
+        shipping_cost = 10000
+        tax = subtotal * 0.01
+        total_amount = subtotal + shipping_cost + tax
+        
+        # Generate unique transaction reference
+        import uuid
+        tx_ref = f"MOMO_{uuid.uuid4().hex[:8].upper()}"
+        
+        # Create order record (pending payment)
+        order = Order(
+            user_id=current_user.id,
+            total_amount=total_amount,
+            status='pending_payment'
+        )
+        db.session.add(order)
+        db.session.flush()
+        
+        # Create order items
+        for product_id, item in session['cart'].items():
+            order_item = OrderItem(
+                order_id=order.id,
+                product_id=int(product_id),
+                quantity=item['quantity'],
+                price=item['price']
+            )
+            db.session.add(order_item)
+        
+        db.session.commit()
+        
+        # Store order info in session for payment verification
+        session['pending_order_id'] = order.id
+        session['payment_method'] = 'momopay'
+        session['tx_ref'] = tx_ref
+        
+        # For demo purposes, simulate MoMoPay payment
+        # In production, integrate with actual MoMoPay API
+        return jsonify({
+            'success': True,
+            'message': 'MoMoPay payment initiated',
+            'order_id': order.id,
+            'tx_ref': tx_ref,
+            'amount': total_amount,
+            'payment_url': url_for('momopay_payment_page', order_id=order.id, _external=True)
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/process_card_payment', methods=['POST'])
+@login_required
+def process_card_payment():
+    """Process card payment with Flutterwave"""
+    try:
+        data = request.get_json()
+        
+        # Validate cart
+        if 'cart' not in session or not session['cart']:
+            return jsonify({'success': False, 'message': 'Cart is empty'}), 400
+        
+        # Calculate total
+        subtotal = sum(item['price'] * item['quantity'] for item in session['cart'].values())
+        shipping_cost = 10000
+        tax = subtotal * 0.08
+        total_amount = subtotal + shipping_cost + tax
+        
+        # Generate unique transaction reference
+        import uuid
+        tx_ref = f"FLW_{uuid.uuid4().hex[:8].upper()}"
+        
+        # Create order record (pending payment)
+        order = Order(
+            user_id=current_user.id,
+            total_amount=total_amount,
+            status='pending_payment'
+        )
+        db.session.add(order)
+        db.session.flush()
+        
+        # Create order items
+        for product_id, item in session['cart'].items():
+            order_item = OrderItem(
+                order_id=order.id,
+                product_id=int(product_id),
+                quantity=item['quantity'],
+                price=item['price']
+            )
+            db.session.add(order_item)
+        
+        db.session.commit()
+        
+        # Store order info in session
+        session['pending_order_id'] = order.id
+        session['payment_method'] = 'card'
+        session['tx_ref'] = tx_ref
+        
+        # Flutterwave configuration (use test keys for development)
+        flutterwave_config = {
+            'public_key': 'FLWPUBK-0c4347ddda625a4f63c27b43005889bc-X', 
+            'tx_ref': tx_ref,
+            'amount': total_amount,
+            'currency': 'RWF',
+            'customer': {
+                'email': data.get('email'),
+                'phone_number': data.get('phone'),
+                'name': f"{data.get('first_name')} {data.get('last_name')}"
+            }
+        }
+        
+        return jsonify({
+            'success': True,
+            'message': 'Card payment initialized',
+            'order_id': order.id,
+            'tx_ref': tx_ref,
+            'amount': total_amount,
+            'currency': 'RWF',
+            'public_key': flutterwave_config['public_key'],
+            'customer': flutterwave_config['customer']
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/process_flutterwave_payment', methods=['POST'])
+@login_required
+def process_flutterwave_payment():
+    """Process payment with Flutterwave (both MoMo and Card)"""
+    try:
+        data = request.get_json()
+        payment_method = data.get('payment_method')
+        
+        # Validate cart
+        if 'cart' not in session or not session['cart']:
+            return jsonify({'success': False, 'message': 'Cart is empty'}), 400
+        
+        # Calculate total
+        subtotal = sum(item['price'] * item['quantity'] for item in session['cart'].values())
+        shipping_cost = 10000
+        tax = subtotal * 0.08
+        total_amount = subtotal + shipping_cost + tax
+        
+        # Generate unique transaction reference
+        import uuid
+        tx_ref = f"FLW_{uuid.uuid4().hex[:8].upper()}"
+        
+        # Create order record (pending payment)
+        order = Order(
+            user_id=current_user.id,
+            total_amount=total_amount,
+            status='pending_payment'
+        )
+        db.session.add(order)
+        db.session.flush()
+        
+        # Create order items
+        for product_id, item in session['cart'].items():
+            order_item = OrderItem(
+                order_id=order.id,
+                product_id=int(product_id),
+                quantity=item['quantity'],
+                price=item['price']
+            )
+            db.session.add(order_item)
+        
+        db.session.commit()
+        
+        # Store order info in session
+        session['pending_order_id'] = order.id
+        session['payment_method'] = payment_method
+        session['tx_ref'] = tx_ref
+        
+        flutterwave_config = {
+            'public_key': 'FLWPUBK-0c4347ddda625a4f63c27b43005889bc-X', 
+            'tx_ref': tx_ref,
+            'amount': total_amount,
+            'currency': 'RWF',
+            'payment_options': 'mobilemoney,card,banktransfer' if payment_method == 'momopay' else 'card,banktransfer',
+            'customer': {
+                'email': data.get('email'),
+                'phone_number': data.get('phone'),
+                'name': f"{data.get('first_name')} {data.get('last_name')}"
+            }
+        }
+        
+        return jsonify({
+            'success': True,
+            'message': f'{payment_method.title()} payment initialized',
+            'order_id': order.id,
+            'tx_ref': tx_ref,
+            'amount': total_amount,
+            'currency': 'RWF',
+            'public_key': flutterwave_config['public_key'],
+            'customer': flutterwave_config['customer']
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/verify_payment', methods=['POST'])
+@login_required
+def verify_payment():
+    """Verify payment with Flutterwave"""
+    try:
+        data = request.get_json()
+        tx_ref = data.get('tx_ref')
+        
+        # In production, verify with Flutterwave API
+        # For demo purposes, we'll simulate successful verification
+        
+        order = Order.query.filter_by(id=session.get('pending_order_id')).first()
+        if not order:
+            return jsonify({'success': False, 'message': 'Order not found'}), 404
+        
+        if order.status != 'pending_payment':
+            return jsonify({'success': False, 'message': 'Invalid payment status'}), 400
+        
+        # Simulate payment verification
+        order.status = 'completed'
+        
+        # Update product stock
+        for item in order.items:
+            product = Product.query.get(item.product_id)
+            if product:
+                product.stock -= item.quantity
+        
+        db.session.commit()
+        
+        # Clear cart and session data
+        session.pop('cart', None)
+        session.pop('pending_order_id', None)
+        session.pop('payment_method', None)
+        session.pop('tx_ref', None)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Payment verified successfully',
+            'order_id': order.id
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/payment_webhook', methods=['POST'])
+def payment_webhook():
+    """Handle payment webhooks from Flutterwave"""
+    try:
+        data = request.get_json()
+        
+        # Verify webhook signature (implement proper verification)
+        # For demo purposes, we'll accept all webhooks
+        
+        tx_ref = data.get('tx_ref')
+        status = data.get('status')
+        
+        if status == 'successful':
+            # Find order by tx_ref
+            order = Order.query.filter_by(id=session.get('pending_order_id')).first()
+            if order:
+                order.status = 'completed'
+                
+                # Update product stock
+                for item in order.items:
+                    product = Product.query.get(item.product_id)
+                    if product:
+                        product.stock -= item.quantity
+                
+                db.session.commit()
+                
+                # Clear cart and session data
+                session.pop('cart', None)
+                session.pop('pending_order_id', None)
+                session.pop('payment_method', None)
+                session.pop('tx_ref', None)
+        
+        return jsonify({'success': True}), 200
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/momopay_payment_page/<int:order_id>')
+@login_required
+def momopay_payment_page(order_id):
+    """MoMoPay payment page"""
+    order = Order.query.filter_by(id=order_id, user_id=current_user.id).first_or_404()
+    
+    if order.status != 'pending_payment':
+        flash('Invalid payment status', 'error')
+        return redirect(url_for('orders'))
+    
+    return render_template('momopay_payment.html', order=order)
+
+@app.route('/confirm_momopay_payment/<int:order_id>', methods=['POST'])
+@login_required
+def confirm_momopay_payment(order_id):
+    """Confirm MoMoPay payment (simulated)"""
+    try:
+        order = Order.query.filter_by(id=order_id, user_id=current_user.id).first_or_404()
+        
+        if order.status != 'pending_payment':
+            return jsonify({'success': False, 'message': 'Invalid payment status'}), 400
+        
+        # Simulate payment confirmation
+        order.status = 'completed'
+        
+        # Update product stock
+        for item in order.items:
+            product = Product.query.get(item.product_id)
+            if product:
+                product.stock -= item.quantity
+        
+        db.session.commit()
+        
+        # Clear cart and session data
+        session.pop('cart', None)
+        session.pop('pending_order_id', None)
+        session.pop('payment_method', None)
+        session.pop('tx_ref', None)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Payment confirmed successfully',
+            'redirect_url': url_for('orders')
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

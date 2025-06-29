@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}MoMoPay Payment - Sandcy Ltd{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 dark:bg-gray-800 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <div class="max-w-md mx-auto">
+            <!-- Payment Header -->
+            <div class="text-center mb-8">
+                <div class="bg-green-100 dark:bg-green-900/20 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-mobile-alt text-3xl text-green-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">MoMoPay Payment</h1>
+                <p class="text-gray-600 dark:text-gray-400">Complete your payment securely</p>
+            </div>
+
+            <!-- Payment Details -->
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-lg font-semibold mb-4">Order Details</h2>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Order ID:</span>
+                        <span class="font-medium">#{{ order.id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Amount:</span>
+                        <span class="font-bold text-lg">{{ order.total_amount|int }} RWF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Status:</span>
+                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Pending Payment</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Instructions -->
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-lg font-semibold mb-4">Payment Instructions</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                            <div>
+                                <h3 class="font-medium text-blue-800 dark:text-blue-200 mb-2">How to pay with MoMoPay</h3>
+                                <ol class="text-sm text-blue-700 dark:text-blue-300 space-y-2">
+                                    <li>1. You will receive a payment prompt on your phone</li>
+                                    <li>2. Enter your MoMoPay PIN when prompted</li>
+                                    <li>3. Confirm the payment amount</li>
+                                    <li>4. Wait for payment confirmation</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-shield-alt text-green-600 mt-1"></i>
+                            <div>
+                                <h3 class="font-medium text-green-800 dark:text-green-200 mb-1">Secure Payment</h3>
+                                <p class="text-sm text-green-700 dark:text-green-300">Your payment is processed securely through MoMoPay's encrypted system.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Actions -->
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+                <div class="space-y-4">
+                    <!-- Simulate Payment Button -->
+                    <button id="simulatePaymentBtn" 
+                            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition flex items-center justify-center">
+                        <i class="fas fa-mobile-alt mr-2"></i>
+                        <span>Simulate MoMoPay Payment</span>
+                    </button>
+                    
+                    <!-- Cancel Payment -->
+                    <button id="cancelPaymentBtn" 
+                            class="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 py-3 rounded-lg font-medium transition">
+                        Cancel Payment
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('orders') }}" class="text-primary hover:text-secondary text-sm">
+                        ← Back to Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Processing Modal -->
+<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4">
+        <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
+            <h3 class="text-lg font-semibold mb-2">Processing Payment</h3>
+            <p class="text-gray-600 dark:text-gray-400">Please wait while we process your MoMoPay payment...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4">
+        <div class="text-center">
+            <div class="bg-green-100 dark:bg-green-900/20 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-check text-2xl text-green-600"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Payment Successful!</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Your order has been placed successfully.</p>
+            <button id="viewOrdersBtn" 
+                    class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-medium transition">
+                View My Orders
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Simulate payment button
+    document.getElementById('simulatePaymentBtn').addEventListener('click', async () => {
+        // Show payment modal
+        document.getElementById('paymentModal').classList.remove('hidden');
+        
+        try {
+            // Simulate payment processing delay
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            // Send payment confirmation request
+            const response = await fetch(`/confirm_momopay_payment/{{ order.id }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Hide payment modal
+                document.getElementById('paymentModal').classList.add('hidden');
+                
+                // Show success modal
+                document.getElementById('successModal').classList.remove('hidden');
+            } else {
+                throw new Error(data.message || 'Payment failed');
+            }
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Payment failed. Please try again.');
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+    });
+
+    // Cancel payment button
+    document.getElementById('cancelPaymentBtn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to cancel this payment?')) {
+            window.location.href = '/orders';
+        }
+    });
+
+    // View orders button
+    document.getElementById('viewOrdersBtn').addEventListener('click', () => {
+        window.location.href = '/orders';
+    });
+
+    // Auto-redirect after 5 seconds on success
+    document.getElementById('successModal').addEventListener('shown', () => {
+        setTimeout(() => {
+            window.location.href = '/orders';
+        }, 5000);
+    });
+</script>
+{% endblock %} 

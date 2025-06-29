@@ -118,7 +118,18 @@
         button.addEventListener('click', async (e) => {
             const productId = e.target.closest('button').getAttribute('data-id');
             const isIncrease = e.target.closest('button').classList.contains('increase-quantity');
-            const change = isIncrease ? 1 : -1;
+            
+            // Get current quantity from the display
+            const quantityDisplay = e.target.closest('.cart-item').querySelector('.quantity-display');
+            const currentQuantity = parseInt(quantityDisplay.textContent);
+            
+            // Calculate new quantity
+            const newQuantity = isIncrease ? currentQuantity + 1 : currentQuantity - 1;
+            
+            // Don't allow quantity less than 1
+            if (newQuantity < 1) {
+                return;
+            }
             
             try {
                 const response = await fetch('/update_cart', {
@@ -128,7 +139,7 @@
                     },
                     body: JSON.stringify({
                         product_id: productId,
-                        quantity: change
+                        quantity: newQuantity
                     })
                 });
                 
