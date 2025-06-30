@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+werkzeug
+reportlab
+pandas
+numpy
+scikit-learn
+gunicorn
+python-dotenv 

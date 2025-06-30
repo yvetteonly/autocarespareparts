@@ -1,343 +1,488 @@
-{% extends "base.html" %}
-
-{% block title %}Checkout - Sandcy Ltd{% endblock %}
-
+{% extends "base.html" %} {% block title %}Checkout - Sandcy Ltd{% endblock %}
 {% block content %}
 <div class="bg-gray-100 dark:bg-gray-800 min-h-screen py-8">
-    <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-            <!-- Page Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Checkout</h1>
-                <p class="text-gray-600 dark:text-gray-400">
-                    Complete your purchase
-                </p>
+  <div class="container mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Checkout
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">Complete your purchase</p>
+      </div>
+
+      <form
+        id="checkoutForm"
+        method="POST"
+        class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
+        <!-- Checkout Form -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Shipping Information -->
+          <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-6">Shipping Information</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="first_name"
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >First Name</label
+                >
+                <input
+                  type="text"
+                  id="first_name"
+                  name="first_name"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                  value="{{ current_user.first_name or '' }}"
+                />
+              </div>
+              <div>
+                <label
+                  for="last_name"
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Last Name</label
+                >
+                <input
+                  type="text"
+                  id="last_name"
+                  name="last_name"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                  value="{{ current_user.last_name or '' }}"
+                />
+              </div>
             </div>
 
-            <form id="checkoutForm" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Checkout Form -->
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- Shipping Information -->
-                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold mb-6">Shipping Information</h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name</label>
-                                <input type="text" id="first_name" name="first_name" required 
-                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
-                                       value="{{ current_user.first_name or '' }}">
-                            </div>
-                            <div>
-                                <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name</label>
-                                <input type="text" id="last_name" name="last_name" required 
-                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
-                                       value="{{ current_user.last_name or '' }}">
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
-                            <input type="email" id="email" name="email" required 
-                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
-                                   value="{{ current_user.email or '' }}">
-                        </div>
-                        
-                        <div class="mt-4">
-                            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" required 
-                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
-                                   placeholder="+250 123 456 789">
-                        </div>
-                        
-                        <div class="mt-4">
-                            <label for="address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Street Address</label>
-                            <input type="text" id="address" name="address" required 
-                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                            <div>
-                                <label for="city" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
-                                <input type="text" id="city" name="city" required 
-                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
-                            </div>
-                            <div>
-                                <label for="state" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">State/Province</label>
-                                <input type="text" id="state" name="state" required 
-                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
-                            </div>
-                            <div>
-                                <label for="zip_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ZIP Code</label>
-                                <input type="text" id="zip_code" name="zip_code" required 
-                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
-                            </div>
-                        </div>
-                    </div>
+            <div class="mt-4">
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                value="{{ current_user.email or '' }}"
+              />
+            </div>
 
-                    <!-- Payment Method Selection -->
-                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold mb-6">Payment Method</h2>
-                        
-                        <div class="space-y-4">
-                            <!-- Payment Method Options -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- MoMoPay Option -->
-                                <div class="payment-option border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 cursor-pointer hover:border-primary transition-colors" data-method="momopay">
-                                    <div class="flex items-center space-x-3">
-                                        <input type="radio" name="payment_method" value="momopay" id="momopay" class="text-primary focus:ring-primary">
-                                        <div class="flex items-center space-x-2">
-                                            <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
-                                            <div>
-                                                <label for="momopay" class="font-semibold cursor-pointer">MoMoPay</label>
-                                                <p class="text-sm text-gray-600 dark:text-gray-400">Mobile Money Payment</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Card Payment Option -->
-                                <div class="payment-option border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 cursor-pointer hover:border-primary transition-colors" data-method="card">
-                                    <div class="flex items-center space-x-3">
-                                        <input type="radio" name="payment_method" value="card" id="card" class="text-primary focus:ring-primary">
-                                        <div class="flex items-center space-x-2">
-                                            <i class="fas fa-credit-card text-2xl text-blue-600"></i>
-                                            <div>
-                                                <label for="card" class="font-semibold cursor-pointer">Credit/Debit Card</label>
-                                                <p class="text-sm text-gray-600 dark:text-gray-400">Secure card payment</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Payment Information -->
-                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                                <div class="flex items-center space-x-2 mb-3">
-                                    <i class="fas fa-info-circle text-blue-600"></i>
-                                    <span class="font-medium text-blue-800 dark:text-blue-200">Secure Payment</span>
-                                </div>
-                                <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                                    <li>• All payments are processed securely by Flutterwave</li>
-                                    <li>• Your payment information is encrypted and secure</li>
-                                    <li>• Multiple payment options available (MoMo, Card, Bank Transfer)</li>
-                                    <li>• Instant payment confirmation</li>
-                                </ul>
-                            </div>
-                        </div>
+            <div class="mt-4">
+              <label
+                for="phone"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >Phone Number</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                placeholder="+250 123 456 789"
+              />
+            </div>
+
+            <div class="mt-4">
+              <label
+                for="address"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >Street Address</label
+              >
+              <input
+                type="text"
+                id="address"
+                name="address"
+                required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div>
+                <label
+                  for="city"
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >City</label
+                >
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label
+                  for="state"
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >State/Province</label
+                >
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label
+                  for="zip_code"
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >ZIP Code</label
+                >
+                <input
+                  type="text"
+                  id="zip_code"
+                  name="zip_code"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Method Selection -->
+          <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-6">Payment Method</h2>
+
+            <div class="space-y-4">
+              <!-- Payment Method Options -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- MoMoPay Option -->
+                <div
+                  class="payment-option border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 cursor-pointer hover:border-primary transition-colors"
+                  data-method="momopay"
+                >
+                  <div class="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      value="momopay"
+                      id="momopay"
+                      class="text-primary focus:ring-primary"
+                    />
+                    <div class="flex items-center space-x-2">
+                      <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
+                      <div>
+                        <label
+                          for="momopay"
+                          class="font-semibold cursor-pointer"
+                          >MoMoPay</label
+                        >
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                          Mobile Money Payment
+                        </p>
+                      </div>
                     </div>
+                  </div>
                 </div>
 
-                <!-- Order Summary -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 sticky top-24">
-                        <h2 class="text-xl font-semibold mb-6">Order Summary</h2>
-                        
-                        <div class="space-y-4">
-                            {% for product_id, item in session.cart.items() %}
-                            <div class="flex justify-between items-center">
-                                <div class="flex-1">
-                                    <p class="font-medium">{{ item.name }}</p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">Qty: {{ item.quantity }}</p>
-                                </div>
-                                <span class="font-semibold">{{ (item.price * item.quantity)|int }} RWF</span>
-                            </div>
-                            {% endfor %}
-                            
-                            <hr class="border-gray-200 dark:border-gray-600">
-                            
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span>Subtotal:</span>
-                                    <span id="subtotal">{{ (session.cart.values() | sum(attribute='price') * session.cart.values() | sum(attribute='quantity'))|int }} RWF</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Shipping:</span>
-                                    <span>10000 RWF</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Tax:</span>
-                                    <span id="tax">{{ ((session.cart.values() | sum(attribute='price') * session.cart.values() | sum(attribute='quantity')) * 0.08)|int }} RWF</span>
-                                </div>
-                                <hr class="border-gray-200 dark:border-gray-600">
-                                <div class="flex justify-between font-bold text-lg">
-                                    <span>Total:</span>
-                                    <span id="total">{{ ((session.cart.values() | sum(attribute='price') * session.cart.values() | sum(attribute='quantity')) + 10000 + ((session.cart.values() | sum(attribute='price') * session.cart.values() | sum(attribute='quantity')) * 0.08))|int }} RWF</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <button type="submit" id="placeOrderBtn"
-                                    class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-medium transition flex items-center justify-center">
-                                <i class="fas fa-lock mr-2"></i>
-                                <span>Pay Securely with Flutterwave</span>
-                            </button>
-                        </div>
-                        
-                        <div class="mt-4 text-center">
-                            <a href="{{ url_for('cart') }}" class="text-primary hover:text-secondary text-sm">
-                                ← Back to Cart
-                            </a>
-                        </div>
-                        
-                        <!-- Security Notice -->
-                        <div class="mt-4 text-center">
-                            <div class="flex items-center justify-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                                <i class="fas fa-shield-alt"></i>
-                                <span>Secure payment powered by Flutterwave</span>
-                            </div>
-                        </div>
+                <!-- Card Payment Option -->
+                <div
+                  class="payment-option border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 cursor-pointer hover:border-primary transition-colors"
+                  data-method="card"
+                >
+                  <div class="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      value="card"
+                      id="card"
+                      class="text-primary focus:ring-primary"
+                    />
+                    <div class="flex items-center space-x-2">
+                      <i class="fas fa-credit-card text-2xl text-blue-600"></i>
+                      <div>
+                        <label for="card" class="font-semibold cursor-pointer"
+                          >Credit/Debit Card</label
+                        >
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                          Secure card payment
+                        </p>
+                      </div>
                     </div>
+                  </div>
                 </div>
-            </form>
+              </div>
+
+              <!-- Payment Information -->
+              <div
+                class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4"
+              >
+                <div class="flex items-center space-x-2 mb-3">
+                  <i class="fas fa-info-circle text-blue-600"></i>
+                  <span class="font-medium text-blue-800 dark:text-blue-200"
+                    >Secure Payment</span
+                  >
+                </div>
+                <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                  <li>• All payments are processed securely by Flutterwave</li>
+                  <li>• Your payment information is encrypted and secure</li>
+                  <li>
+                    • Multiple payment options available (MoMo, Card, Bank
+                    Transfer)
+                  </li>
+                  <li>• Instant payment confirmation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+          <div
+            class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 sticky top-24"
+          >
+            <h2 class="text-xl font-semibold mb-6">Order Summary</h2>
+
+            <div class="space-y-4">
+              {% for product_id, item in session.cart.items() %}
+              <div class="flex justify-between items-center">
+                <div class="flex-1">
+                  <p class="font-medium">{{ item.name }}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Qty: {{ item.quantity }}
+                  </p>
+                </div>
+                <span class="font-semibold"
+                  >{{ (item.price * item.quantity)|int }} RWF</span
+                >
+              </div>
+              {% endfor %}
+
+              <hr class="border-gray-200 dark:border-gray-600" />
+
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span id="subtotal"
+                    >{{ (session.cart.values() | sum(attribute='price') *
+                    session.cart.values() | sum(attribute='quantity'))|int }}
+                    RWF</span
+                  >
+                </div>
+                <div class="flex justify-between">
+                  <span>Shipping:</span>
+                  <span>10000 RWF</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Tax:</span>
+                  <span id="tax"
+                    >{{ ((session.cart.values() | sum(attribute='price') *
+                    session.cart.values() | sum(attribute='quantity')) *
+                    0.08)|int }} RWF</span
+                  >
+                </div>
+                <hr class="border-gray-200 dark:border-gray-600" />
+                <div class="flex justify-between font-bold text-lg">
+                  <span>Total:</span>
+                  <span id="total"
+                    >{{ ((session.cart.values() | sum(attribute='price') *
+                    session.cart.values() | sum(attribute='quantity')) + 10000 +
+                    ((session.cart.values() | sum(attribute='price') *
+                    session.cart.values() | sum(attribute='quantity')) *
+                    0.08))|int }} RWF</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <button
+                type="submit"
+                id="placeOrderBtn"
+                class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-medium transition flex items-center justify-center"
+              >
+                <i class="fas fa-lock mr-2"></i>
+                <span>Pay Securely with Flutterwave</span>
+              </button>
+            </div>
+
+            <div class="mt-4 text-center">
+              <a
+                href="{{ url_for('cart') }}"
+                class="text-primary hover:text-secondary text-sm"
+              >
+                ← Back to Cart
+              </a>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="mt-4 text-center">
+              <div
+                class="flex items-center justify-center space-x-2 text-xs text-gray-500 dark:text-gray-400"
+              >
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure payment powered by Flutterwave</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
 
 <!-- Payment Processing Modal -->
-<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4">
-        <div class="text-center">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-            <h3 class="text-lg font-semibold mb-2">Processing Payment</h3>
-            <p class="text-gray-600 dark:text-gray-400">Please wait while we process your payment securely...</p>
-        </div>
+<div
+  id="paymentModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
+>
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4">
+    <div class="text-center">
+      <div
+        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"
+      ></div>
+      <h3 class="text-lg font-semibold mb-2">Processing Payment</h3>
+      <p class="text-gray-600 dark:text-gray-400">
+        Please wait while we process your payment securely...
+      </p>
     </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
+{% endblock %} {% block extra_js %}
 <script src="https://checkout.flutterwave.com/v3.js"></script>
 <script>
-    // Payment method selection
-    document.querySelectorAll('.payment-option').forEach(option => {
-        option.addEventListener('click', () => {
-            const method = option.getAttribute('data-method');
-            
-            // Update radio button
-            document.getElementById(method).checked = true;
-            
-            // Update button text
-            const button = document.getElementById('placeOrderBtn');
-            if (method === 'momopay') {
-                button.innerHTML = '<i class="fas fa-mobile-alt mr-2"></i><span>Pay with MoMoPay</span>';
-            } else if (method === 'card') {
-                button.innerHTML = '<i class="fas fa-credit-card mr-2"></i><span>Pay with Card</span>';
-            }
-        });
+  // Payment method selection
+  document.querySelectorAll('.payment-option').forEach((option) => {
+    option.addEventListener('click', () => {
+      const method = option.getAttribute('data-method');
+
+      // Update radio button
+      document.getElementById(method).checked = true;
+
+      // Update button text
+      const button = document.getElementById('placeOrderBtn');
+      if (method === 'momopay') {
+        button.innerHTML =
+          '<i class="fas fa-mobile-alt mr-2"></i><span>Pay with MoMoPay</span>';
+      } else if (method === 'card') {
+        button.innerHTML =
+          '<i class="fas fa-credit-card mr-2"></i><span>Pay with Card</span>';
+      }
+    });
+  });
+
+  // Form submission
+  document
+    .getElementById('checkoutForm')
+    .addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const paymentMethod = formData.get('payment_method');
+
+      if (!paymentMethod) {
+        alert('Please select a payment method');
+        return;
+      }
+
+      // Show payment modal
+      document.getElementById('paymentModal').classList.remove('hidden');
+
+      try {
+        await processFlutterwavePayment(formData, paymentMethod);
+      } catch (error) {
+        console.error('Payment error:', error);
+        alert('Payment failed. Please try again.');
+        document.getElementById('paymentModal').classList.add('hidden');
+      }
     });
 
-    // Form submission
-    document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const paymentMethod = formData.get('payment_method');
-        
-        if (!paymentMethod) {
-            alert('Please select a payment method');
-            return;
-        }
-        
-        // Show payment modal
-        document.getElementById('paymentModal').classList.remove('hidden');
-        
-        try {
-            await processFlutterwavePayment(formData, paymentMethod);
-        } catch (error) {
-            console.error('Payment error:', error);
+  // Unified Flutterwave Payment Processing
+  async function processFlutterwavePayment(formData, paymentMethod) {
+    const response = await fetch('/process_flutterwave_payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        first_name: formData.get('first_name'),
+        last_name: formData.get('last_name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+        city: formData.get('city'),
+        state: formData.get('state'),
+        zip_code: formData.get('zip_code'),
+        payment_method: paymentMethod,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Initialize Flutterwave payment
+      FlutterwaveCheckout({
+        public_key: data.public_key,
+        tx_ref: data.tx_ref,
+        amount: data.amount,
+        currency: data.currency,
+        payment_options:
+          paymentMethod === 'momopay' ? 'mobilemoney' : 'card,banktransfer',
+        customer: {
+          email: data.customer.email,
+          phone_number: data.customer.phone,
+          name: data.customer.name,
+        },
+        customizations: {
+          title: 'Sandcy Ltd',
+          description: 'Auto Parts Purchase',
+          logo: 'https://example.com/logo.png',
+        },
+        callback: function (response) {
+          // Handle payment callback
+          if (response.status === 'successful') {
+            // Verify payment on backend
+            verifyPayment(data.tx_ref);
+          } else {
             alert('Payment failed. Please try again.');
             document.getElementById('paymentModal').classList.add('hidden');
-        }
-    });
-
-    // Unified Flutterwave Payment Processing
-    async function processFlutterwavePayment(formData, paymentMethod) {
-        const response = await fetch('/process_flutterwave_payment', {
-            method: 'POST',
-            headers: {
-                "Authorization": "Bearer FLWSECK-ef7734afb2dca1415a831364155f13e4-19140fe2419vt-X",  
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                first_name: formData.get('first_name'),
-                last_name: formData.get('last_name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                address: formData.get('address'),
-                city: formData.get('city'),
-                state: formData.get('state'),
-                zip_code: formData.get('zip_code'),
-                payment_method: paymentMethod
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Initialize Flutterwave payment
-            FlutterwaveCheckout({
-                public_key: data.public_key,
-                tx_ref: data.tx_ref,
-                amount: data.amount,
-                currency: data.currency,
-                payment_options: paymentMethod === 'momopay' ? "mobilemoney" : "card,banktransfer",
-                customer: {
-                    email: data.customer.email,
-                    phone_number: data.customer.phone,
-                    name: data.customer.name,
-                },
-                customizations: {
-                    title: "Sandcy Ltd",
-                    description: "Auto Parts Purchase",
-                    logo: "https://example.com/logo.png",
-                },
-                callback: function (response) {
-                    // Handle payment callback
-                    if (response.status === 'successful') {
-                        // Verify payment on backend
-                        verifyPayment(data.tx_ref);
-                    } else {
-                        alert('Payment failed. Please try again.');
-                        document.getElementById('paymentModal').classList.add('hidden');
-                    }
-                },
-                onClose: function() {
-                    document.getElementById('paymentModal').classList.add('hidden');
-                }
-            });
-        } else {
-            throw new Error(data.message || 'Payment initialization failed');
-        }
+          }
+        },
+        onClose: function () {
+          document.getElementById('paymentModal').classList.add('hidden');
+        },
+      });
+    } else {
+      throw new Error(data.message || 'Payment initialization failed');
     }
+  }
 
-    // Verify payment on backend
-    async function verifyPayment(txRef) {
-        try {
-            const response = await fetch('/verify_payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    tx_ref: txRef
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                window.location.href = '/orders';
-            } else {
-                alert('Payment verification failed. Please contact support.');
-                document.getElementById('paymentModal').classList.add('hidden');
-            }
-        } catch (error) {
-            console.error('Payment verification error:', error);
-            alert('Payment verification failed. Please contact support.');
-            document.getElementById('paymentModal').classList.add('hidden');
-        }
+  // Verify payment on backend
+  async function verifyPayment(txRef) {
+    try {
+      const response = await fetch('/verify_payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tx_ref: txRef,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        window.location.href = '/orders';
+      } else {
+        alert('Payment verification failed. Please contact support.');
+        document.getElementById('paymentModal').classList.add('hidden');
+      }
+    } catch (error) {
+      console.error('Payment verification error:', error);
+      alert('Payment verification failed. Please contact support.');
+      document.getElementById('paymentModal').classList.add('hidden');
     }
+  }
 </script>
-{% endblock %} 
+{% endblock %}

@@ -14,6 +14,7 @@ from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from config import Config
 
 # ML imports for recommendations
 import pandas as pd
@@ -27,9 +28,7 @@ import json
 import random
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here-change-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///autoparts.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -1910,7 +1909,7 @@ def process_card_payment():
         
         # Flutterwave configuration (use test keys for development)
         flutterwave_config = {
-            'public_key': 'FLWPUBK-0c4347ddda625a4f63c27b43005889bc-X', 
+            'public_key': os.getenv('FLUTTERWAVE_PUBLIC_KEY'), 
             'tx_ref': tx_ref,
             'amount': total_amount,
             'currency': 'RWF',
@@ -1987,7 +1986,7 @@ def process_flutterwave_payment():
         # Flutterwave configuration (use test keys for development)
         # In production, use actual Flutterwave keys from config
         flutterwave_config = {
-            'public_key': 'FLWPUBK-0c4347ddda625a4f63c27b43005889bc-X', 
+            'public_key': app.config['FLUTTERWAVE_PUBLIC_KEY'], 
             'tx_ref': tx_ref,
             'amount': total_amount,
             'currency': 'RWF',
